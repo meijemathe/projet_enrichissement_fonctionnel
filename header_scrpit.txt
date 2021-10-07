@@ -1,0 +1,25 @@
+# Projet d'annotation fonctionnel avec R Shiny 
+
+# Auteurs :
+
+# MATHE Maije : meije.mathe@univ-rouen.fr
+# PETY Solène : solene.pety@etu.univ-rouen.fr
+# LETERRIER Bryce : bryce.leterrier@univ-rouen.fr
+# OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
+
+# M2.1 BIMS - Univ. Rouen Normandie 
+ 
+# 2021 - 2022
+
+#####################################################################
+# Initialisation des packages 
+
+if (!require('shiny', quietly = T)) install.packages('shiny');
+if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
+if (!require('DT', quietly = T)) install.packages('DT');
+
+library(shiny)
+library(shinydashboard)
+library(DT)
+
+#####################################################################
