@@ -17,7 +17,7 @@
 if (!require('shiny', quietly = T)) install.packages('shiny');
 if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
 if (!require('DT', quietly = T)) install.packages('DT');
-if (!require('plotly', quietly = T)) install.packages('potly');
+if (!require('plotly', quietly = T)) install.packages('plotly');
 if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
 
 library(shiny)
