@@ -77,39 +77,13 @@ dashboardPage(
                                         )
                                 ),
                                 fixedRow(
-                                        # Box selection of log2FC and p-value
-                                        box(
-                                                title = "OPTIONS",
-                                                solidHeader = TRUE,
-                                                status = "primary",
-                                                sliderInput(
-                                                        inputId = "pvalue", 
-                                                        label = "p-value cutoff from input :",
-                                                        min = 0, 
-                                                        max = 1,
-                                                        value = 0.05),
-                                                sliderInput(
-                                                        inputId = "FC", 
-                                                        label = "log2 Fold-Change cutoff from input :", 
-                                                        min = 0, 
-                                                        max = 5, 
-                                                        value = 1),
-                                                downloadButton(
-                                                        outputId = "download_volcano", 
-                                                        label = "Download volcano plot", 
-                                                ),
-                                                downloadButton(
-                                                        outputId = "download_MA", 
-                                                        label = "Download MA plot", 
-                                                )
-                                        ),
                                         box(
                                                 title = "SET UP FOR SUBSEQUENT ANALYSES",
                                                 solidHeader = TRUE,
                                                 status = "primary",
                                                 sliderInput(
                                                         inputId = "FC", 
-                                                        label = "p-value cutoff for subsequent analyses :", 
+                                                        label = "fitted p-value cutoff for subsequent analyses :", 
                                                         min = 0, 
                                                         max = 1, 
                                                         value = 0.05)
