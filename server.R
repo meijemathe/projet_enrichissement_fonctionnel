@@ -1,14 +1,50 @@
-library(shiny)
-library(plotly)
-library(shinydashboard)
-library(htmlwidgets)
+# Projet d'annotation fonctionnel avec R Shiny 
 
+# Auteurs :
+
+# MATHE Maije : meije.mathe@univ-rouen.fr
+# PETY Solène : solene.pety@etu.univ-rouen.fr
+# LETERRIER Bryce : bryce.leterrier@univ-rouen.fr
+# OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
+
+# M2.1 BIMS - Univ. Rouen Normandie 
+
+# 2021 - 2022
+
+#####################################################################
+# Initialisation des packages 
+
+if (!require('shiny', quietly = T)) install.packages('shiny');
+if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
+if (!require('DT', quietly = T)) install.packages('DT');
+if (!require('plotly', quietly = T)) install.packages('potly');
+if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
+
+library(shiny)
+library(shinydashboard)
+library(DT)
+library(plotly)
+library(htmlwidgets)
+#####################################################################
+
+# Debut
 function(input, output) {
         # When the analysis is started
         observeEvent(input$start, {
+                req(input$file)
+                ext <- tools::file_ext(input$file$datapath)
+               
+                validate(need(ext == "csv", "Please upload a csv file"))
                 # Get data from the uploaded file
                 data <- reactive({
-                        read.csv(file = input$file$datapath, sep = ";", header = TRUE)
+                        req(input$file)
+                        df <- read.csv(input$file$datapath, sep = ";")
+                        df["log2padj"] <- -log2(df["padj"])
+                        df
+                })
+                # Data view
+                output$table <- DT::renderDataTable({
+                        data()
                 })
                 # Create the action when the curser hovers on the plot
                 addHoverBehavior <- "function(el, x){
@@ -28,36 +64,39 @@ function(input, output) {
                         shinyRenderWidget(expr, plotlyOutput, env, quoted = TRUE)
                 }
                 # Generate the volcano plot
-                output$volcano <- renderPlotly2({
-                        x <- data()$log2FC
-                        y <- data()$pval
-                        d <- data.frame(x,y)
-                        print(d$y)
-                        d$genes <- data()$GeneName
-                        d$diffexpressed <- "NO"
-                        d$diffexpressed[d$x > input$FC & d$y < input$pvalue] <- "UP"
-                        d$diffexpressed[d$x < -input$FC & d$y < input$pvalue] <- "DOWN"
-                        mycolors <- c("blue", "red", "black")
+                volcanoPlot <- reactive({
+                        df <- data()
+                        df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
+                                        ifelse(df["log2FC"] <= -input$FC & df["padj"] <= input$pvalue,"DOWN",
+                                        "NO")
+                                )
+                        mycolors <- c("blue", "orange", "grey")
                         names(mycolors) <- c("DOWN", "UP", "NO")
-                        p <- plot_ly(data = d, x = x, y = -log2(y), text = d$genes, mode = "markers", color = d$diffexpressed, colors = mycolors)
+                        plot_ly(data = df, x = df$log2FC, y = df$log2padj, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors)
+                        
+                })
+                output$volcano <- renderPlotly2({
+                        p <- volcanoPlot()
                         as_widget(p) %>% onRender(addHoverBehavior)
+                        
                 })
                 # Print genes name when the curser hovers on the points
                 output$hover <- renderText({
                         input$hover_data
                 })
-                output$MA <- renderPlotly2({
-                        x <- data()$baseMean
-                        y <- data()$pval
-                        d <- data.frame(x,y)
-                        print(d$y)
-                        d$genes <- data()$GeneName
-                        d$diffexpressed <- "NO"
-                        d$diffexpressed[d$x > input$FC & d$y < input$pvalue] <- "UP"
-                        d$diffexpressed[d$x < -input$FC & d$y < input$pvalue] <- "DOWN"
-                        mycolors <- c("blue", "red", "black")
+                MAPlot <- reactive({
+                        df <- data()
+                        df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
+                                            ifelse(df["log2FC"] <= -input$FC & df["padj"] <= input$pvalue,"DOWN",
+                                                   "NO")
+                        )
+                        mycolors <- c("blue", "orange", "grey")
                         names(mycolors) <- c("DOWN", "UP", "NO")
-                        p <- plot_ly(data = d, x = -log2(y), y = x, text = d$genes, mode = "markers", color = d$diffexpressed, colors = mycolors)
+                        plot_ly(data = df, x = log2(df$baseMean), y = df$log2FC, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors)
+                        
+                })
+                output$MA <- renderPlotly2({
+                        p <- MAPlot()
                         as_widget(p) %>% onRender(addHoverBehavior)
                 })
         })
