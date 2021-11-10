@@ -2,8 +2,8 @@
 
 # Auteurs :
 
-# MATHE Maije : meije.mathe@univ-rouen.fr
-# PETY Solène : solene.pety@etu.univ-rouen.fr
+# MATHE Meije : meije.mathe@univ-rouen.fr
+# PETY Solene : solene.pety@etu.univ-rouen.fr
 # LETERRIER Bryce : bryce.leterrier@univ-rouen.fr
 # OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
 

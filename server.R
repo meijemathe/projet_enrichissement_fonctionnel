@@ -2,8 +2,8 @@
 
 # Auteurs :
 
-# MATHE Maije : meije.mathe@univ-rouen.fr
-# PETY Solène : solene.pety@etu.univ-rouen.fr
+# MATHE Meije : meije.mathe@univ-rouen.fr
+# PETY Solene : solene.pety@etu.univ-rouen.fr
 # LETERRIER Bryce : bryce.leterrier@univ-rouen.fr
 # OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
 
@@ -17,7 +17,7 @@
 if (!require('shiny', quietly = T)) install.packages('shiny');
 if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
 if (!require('DT', quietly = T)) install.packages('DT');
-if (!require('plotly', quietly = T)) install.packages('potly');
+if (!require('plotly', quietly = T)) install.packages('plotly');
 if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
 
 library(shiny)
