@@ -19,12 +19,21 @@ if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
 if (!require('DT', quietly = T)) install.packages('DT');
 if (!require('plotly', quietly = T)) install.packages('plotly');
 if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
+if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
+if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
+#if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
 
+
+# BiocManager::install("biomaRt")
+# BiocManager::install("clusterProfiler")
+# BiocManager::install("pathview")
 library(shiny)
 library(shinydashboard)
 library(DT)
 library(plotly)
 library(htmlwidgets)
+library(shinyalert)
+library(shinyjs)
 #####################################################################
 
 dashboardPage(
@@ -34,14 +43,14 @@ dashboardPage(
         dashboardSidebar(
                 sidebarMenu(
                         # File selection
-                        fileInput("file", label = "File input", accept = c(
+                        fileInput("file", multiple = FALSE, label = "File input", accept = c(
                                 "text/csv",
                                 "text/comma-separated-values,text/plain",
                                 ".csv")),
                         # verbatimTextOutput("file"),
                         # Select box : organism selection
                         selectInput("select_organism", label = "Organism of interest",
-                                choices = list("Homo Sapiens" = "H. Sapiens", "Mus musculus" = "M. Musculus", "Arabidopsis Thaliana" = "A. Thaliana"),
+                                choices = list("Homo Sapiens" = 1, "Mus musculus" = 2, "Arabidopsis Thaliana" = 3),
                                 selected = 1
                         ),
                         # verbatimTextOutput("select_organism"),
@@ -85,7 +94,7 @@ dashboardPage(
                                                 status = "primary",
                                                 sliderInput(
                                                         inputId = "pvalue", 
-                                                        label = "p-value cutoff from input :",
+                                                        label = "fitted p-value cutoff from input :",
                                                         min = 0, 
                                                         max = 1,
                                                         value = 0.05),
@@ -94,7 +103,7 @@ dashboardPage(
                                                         label = "log2 Fold-Change cutoff from input :", 
                                                         min = 0, 
                                                         max = 5, 
-                                                        value = 1)
+                                                        value = 1),
                                         ),
                                         box(
                                                 title = "SET UP FOR SUBSEQUENT ANALYSES",
@@ -102,7 +111,7 @@ dashboardPage(
                                                 status = "primary",
                                                 sliderInput(
                                                         inputId = "FC", 
-                                                        label = "p-value cutoff for subsequent analyses :", 
+                                                        label = "fitted p-value cutoff for subsequent analyses :", 
                                                         min = 0, 
                                                         max = 1, 
                                                         value = 0.05)
