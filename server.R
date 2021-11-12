@@ -101,7 +101,7 @@ function(input, output) {
                         plot_ly(data = df, x = df$log2FC, y = df$log2padj, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors) %>%
                           layout(xaxis = list(title = 'log2(FC)'),
                                  yaxis = list(title = 'log2(padj)'),
-                                 title = "Volcano Plot")
+                                 title = list(text = paste("Volcano Plot ", input$select_organism), x = 0))
                         
                 })
                 output$volcano <- renderPlotly2({
@@ -124,7 +124,7 @@ function(input, output) {
                         plot_ly(data = df, x = log2(df$baseMean), y = df$log2FC, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors) %>%
                                 layout(xaxis = list(title = "log2(baseMean)"),
                                        yaxis = list(title = "log2(FC)"),
-                                       title = "MA Plot")
+                                       title = list(text = paste("MA Plot ", input$select_organism), x = 0))
                         
                 })
                 output$MA <- renderPlotly2({
