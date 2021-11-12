@@ -19,12 +19,21 @@ if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
 if (!require('DT', quietly = T)) install.packages('DT');
 if (!require('plotly', quietly = T)) install.packages('plotly');
 if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
+if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
+if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
+#if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
 
+
+# BiocManager::install("biomaRt")
+# BiocManager::install("clusterProfiler")
+# BiocManager::install("pathview")
 library(shiny)
 library(shinydashboard)
 library(DT)
 library(plotly)
 library(htmlwidgets)
+library(shinyalert)
+library(shinyjs)
 #####################################################################
 
 dashboardPage(
@@ -85,7 +94,7 @@ dashboardPage(
                                                 status = "primary",
                                                 sliderInput(
                                                         inputId = "pvalue", 
-                                                        label = "p-value cutoff from input :",
+                                                        label = "fitted p-value cutoff from input :",
                                                         min = 0, 
                                                         max = 1,
                                                         value = 0.05),
