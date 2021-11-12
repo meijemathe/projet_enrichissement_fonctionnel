@@ -101,8 +101,10 @@ function(input, output) {
                                 )
                         mycolors <- c("blue", "orange", "grey")
                         names(mycolors) <- c("DOWN", "UP", "NO")
-                        plot_ly(data = df, x = df$log2FC, y = df$log2padj, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors)
-                        
+                        plot_ly(data = df, x = df$log2FC, y = df$log2padj, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors) %>%
+                          layout(xaxis = list(title = 'log2(FC)'),
+                                 yaxis = list(title = 'log2(padj)'),
+                                 title = list(text = paste("Volcano Plot ", input$select_organism), x = 0))                        
                 })
                 output$volcano <- renderPlotly2({
                         p <- volcanoPlot()
@@ -123,8 +125,10 @@ function(input, output) {
                         )
                         mycolors <- c("blue", "orange", "grey")
                         names(mycolors) <- c("DOWN", "UP", "NO")
-                        plot_ly(data = df, x = log2(df$baseMean), y = df$log2FC, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors) 
-                        
+                        plot_ly(data = df, x = log2(df$baseMean), y = df$log2FC, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors) %>%
+                                layout(xaxis = list(title = "log2(baseMean)"),
+                                       yaxis = list(title = "log2(FC)"),
+                                       title = list(text = paste("MA Plot ", input$select_organism), x = 0))                        
                 })
                 output$MA <- renderPlotly2({
                         p <- MAPlot()
