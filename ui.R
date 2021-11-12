@@ -50,8 +50,8 @@ dashboardPage(
                         # verbatimTextOutput("file"),
                         # Select box : organism selection
                         selectInput("select_organism", label = "Organism of interest",
-                                choices = list("Homo Sapiens" = 1, "Mus musculus" = 2, "Arabidopsis Thaliana" = 3),
-                                selected = 1
+                                 choices = list("Homo Sapiens" = "H. Sapiens", "Mus musculus" = "M. Musculus", "Arabidopsis Thaliana" = "A. Thaliana"),                                
+                                 selected = 1
                         ),
                         # verbatimTextOutput("select_organism"),
                         useShinyalert(),
@@ -103,7 +103,7 @@ dashboardPage(
                                                         label = "log2 Fold-Change cutoff from input :", 
                                                         min = 0, 
                                                         max = 5, 
-                                                        value = 1),
+                                                        value = 1)
                                         ),
                                         box(
                                                 title = "SET UP FOR SUBSEQUENT ANALYSES",
