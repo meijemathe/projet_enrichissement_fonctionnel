@@ -1,4 +1,3 @@
-spety
 # Projet d'annotation fonctionnel avec R Shiny 
 
 # Auteurs :
