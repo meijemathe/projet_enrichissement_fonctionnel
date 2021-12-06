@@ -16,28 +16,57 @@
 
 if (!require('shiny', quietly = T)) install.packages('shiny');
 if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
+if (!require('shinybusy', quietly = T)) install.packages('shinybusy');
+if (!require('shinycssloaders', quietly = T)) install.packages('shinycssloaders');
+if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
+if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
+if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
+if (!require('biomaRt', quietly = T)) BiocManager::install('biomaRt');
+if (!require('stringr', quietly = T)) install.packages('stringr');
+if (!require('stringi', quietly = T)) install.packages('stringi');
 if (!require('DT', quietly = T)) install.packages('DT');
 if (!require('plotly', quietly = T)) install.packages('plotly');
 if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
-if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
-if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
-#if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
 
 
-# BiocManager::install("biomaRt")
+#BiocManager::install("biomaRt")
 # BiocManager::install("clusterProfiler")
 # BiocManager::install("pathview")
 library(shiny)
 library(shinydashboard)
+library(shinybusy)
+library(shinycssloaders)
+library(shinyjs)
+library(shinyalert)
+library(biomaRt)
+library(stringr)
+library(stringi)
 library(DT)
 library(plotly)
 library(htmlwidgets)
-library(shinyalert)
-library(shinyjs)
+
 #####################################################################
+#to run for each R session for connexion to ensembl with biomart
+#allow R to try other ensembl mirrors site if connexion doesn't work
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+
+############################################################## Biomart, convertion ID en fonction organisme sélectionné###########
+name_short <- paste(sapply(strsplit(listGenomes(db="ensembl"), "_"), "[", 1)
+                    %>%stri_extract_first_regex(".{1}"),
+                    sapply(strsplit(listGenomes(db="ensembl"), "_"), "[", 2),
+                    sep="")%>%
+        sort()%>%
+        unique()
+
+mart<- useMart("ensembl")
+dataset<-biomaRt::listDatasets(mart)
+name_short=name_short[grep(paste(sapply(strsplit(dataset$dataset, "_"), "[", 1),collapse="|"), name_short)]
+dataset=dataset[grep(paste(sapply(strsplit(dataset$dataset, "_"), "[", 1),collapse="|"), name_short),]
+############################################################################################################################""
 
 # Debut
 function(input, output) {
+        disable("start")
         observeEvent(input$file, {
           req(input$file)
           #test extension
@@ -55,14 +84,18 @@ function(input, output) {
             returnValue()
           }
 
-          else if(identical(good,colnames(df))==FALSE)
+          else if(identical(tolower(good),tolower(colnames(df)))==FALSE)
           {
             shinyalert("Column names Error",paste0("Wrong format for column ",which(colnames(df) != good),", it must be : ",good[which(colnames(df) != good)],"\n",collapse=""),type = "error")
             returnValue()
           }
+          else {
+                enable("start")
+          }
         })
         # When the analysis is started
         observeEvent(input$start, {
+                
                 req(input$file)
                 # Get data from the uploaded file
                 data <- reactive({
@@ -71,9 +104,26 @@ function(input, output) {
                         df["log2padj"] <- -log2(df["padj"])
                         df
                 })
+                
+                if(startsWith(data()$ID[1], "ENS")){
+                        selected<-grep(paste(stri_extract_first_regex(input$select_organism,".{1}"),unlist(strsplit(input$select_organism," "))[2],sep=""),dataset$dataset,ignore.case = TRUE,value=TRUE)
+                        mart=useDataset("mmusculus_gene_ensembl",mart=mart)   
+                        genes <- getBM(filters = "ensembl_gene_id",
+                                        attributes = c("ensembl_gene_id","entrezgene_id"),
+                                        values = data()$ID, 
+                                        mart = mart)
+                        #changer ordre colonnes data frame
+                        data2<-reactive({
+                                frame<-merge(data(), genes, by.x ="ID", by.y = "ensembl_gene_id")
+                                frame<-frame[,c("GeneName", "ID", "entrezgene_id","baseMean", "log2FC", "pval", "padj")]
+                                colnames(frame)<-c("GeneName", "ID", "EntrezID","baseMean", "log2FC", "pval", "padj")
+                                frame
+                        })
+                }
+                
                 # Data view
                 output$table <- DT::renderDataTable({
-                        data()
+                        data2()
                 })
                 # Create the action when the curser hovers on the plot
                 addHoverBehavior <- "function(el, x){
@@ -101,8 +151,10 @@ function(input, output) {
                                 )
                         mycolors <- c("blue", "orange", "grey")
                         names(mycolors) <- c("DOWN", "UP", "NO")
-                        plot_ly(data = df, x = df$log2FC, y = df$log2padj, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors)
-                        
+                        plot_ly(data = df, x = df$log2FC, y = df$log2padj, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors) %>%
+                          layout(xaxis = list(title = 'log2(FC)'),
+                                 yaxis = list(title = 'log2(padj)'),
+                                 title = list(text = paste("Volcano Plot ", input$select_organism), x = 0))                        
                 })
                 output$volcano <- renderPlotly2({
                         p <- volcanoPlot()
@@ -123,8 +175,10 @@ function(input, output) {
                         )
                         mycolors <- c("blue", "orange", "grey")
                         names(mycolors) <- c("DOWN", "UP", "NO")
-                        plot_ly(data = df, x = log2(df$baseMean), y = df$log2FC, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors) 
-                        
+                        plot_ly(data = df, x = log2(df$baseMean), y = df$log2FC, text = df$GeneName, mode = "markers", color = df$DEG, colors = mycolors) %>%
+                                layout(xaxis = list(title = "log2(baseMean)"),
+                                       yaxis = list(title = "log2(FC)"),
+                                       title = list(text = paste("MA Plot ", input$select_organism), x = 0))                        
                 })
                 output$MA <- renderPlotly2({
                         p <- MAPlot()

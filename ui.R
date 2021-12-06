@@ -16,31 +16,74 @@
 
 if (!require('shiny', quietly = T)) install.packages('shiny');
 if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
+if (!require('shinybusy', quietly = T)) install.packages('shinybusy');
+if (!require('shinycssloaders', quietly = T)) install.packages('shinycssloaders');
+if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
+if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
+if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
+if (!require('biomaRt', quietly = T)) BiocManager::install('biomaRt');
+if (!require('stringr', quietly = T)) install.packages('stringr');
+if (!require('stringi', quietly = T)) install.packages('stringi');
 if (!require('DT', quietly = T)) install.packages('DT');
 if (!require('plotly', quietly = T)) install.packages('plotly');
 if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
-if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
-if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
-#if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
 
 
-# BiocManager::install("biomaRt")
+#BiocManager::install("biomaRt")
 # BiocManager::install("clusterProfiler")
 # BiocManager::install("pathview")
 library(shiny)
 library(shinydashboard)
+library(shinybusy)
+library(shinycssloaders)
+library(shinyjs)
+library(shinyalert)
+library(biomaRt)
+library(stringr)
+library(stringi)
 library(DT)
 library(plotly)
 library(htmlwidgets)
-library(shinyalert)
-library(shinyjs)
+
 #####################################################################
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+
+############################################### Biomart liste ID ############################################################"
+
+# Adaptation liste en fonction deux listes récupérées par Biomart qui sont de tailles différentes. Conversion dans server.R
+#Ordre mauvais des colonnes
+name_short <- paste(sapply(strsplit(listGenomes(db="ensembl"), "_"), "[", 1)
+                   %>%stri_extract_first_regex(".{1}"),
+                   sapply(strsplit(listGenomes(db="ensembl"), "_"), "[", 2),
+                   sep="")%>%
+                   unique()
+
+liste<-listGenomes(db="ensembl") %>%
+        str_extract("[^_]+_[^_]+") %>%
+        gsub(pattern = "_",replacement = " ") %>%
+        unique() %>%
+        str_to_title()
+
+frame_names=as.data.frame(cbind(name_short,liste))
+frame_names=frame_names[order(frame_names$liste),]
+
+###Récupère dataframe avec id dataset à utiliser, description espèce et version génome
+mart<- useMart("ensembl")
+dataset<-biomaRt::listDatasets(mart)
+
+frame_names=frame_names[grep(paste(sapply(strsplit(dataset$dataset, "_"), "[", 1),collapse="|"), frame_names$name_short),]
+
+### Préparation liste pour menu déroulant, enlever tiret bas, unique, majuscule début mot
+choices=setNames(frame_names$liste,frame_names$liste)
+###############################################################################################################################
 
 dashboardPage(
         skin = "black",
         dashboardHeader(title = "EnF'R"),
         # Sidebar content
         dashboardSidebar(
+                #width sidebar
+                width = 350,
                 sidebarMenu(
                         # File selection
                         fileInput("file", multiple = FALSE, label = "File input", accept = c(
@@ -50,10 +93,12 @@ dashboardPage(
                         # verbatimTextOutput("file"),
                         # Select box : organism selection
                         selectInput("select_organism", label = "Organism of interest",
-                                choices = list("Homo Sapiens" = 1, "Mus musculus" = 2, "Arabidopsis Thaliana" = 3),
-                                selected = 1
+                                    choices=choices,
+                                 #choices = list("Homo Sapiens" = "H. Sapiens", "Mus musculus" = "M. Musculus", "Arabidopsis Thaliana" = "A. Thaliana"),                                
+                                 selected = 1
                         ),
                         # verbatimTextOutput("select_organism"),
+                        shinyjs::useShinyjs(),
                         useShinyalert(),
                         # Start Button
                         actionButton("start", label = "Start analysis"),
@@ -77,13 +122,13 @@ dashboardPage(
                                                 title = "Volcano plot",
                                                 solidHeader = TRUE,
                                                 status = "primary",
-                                                plotlyOutput("volcano")
+                                                plotlyOutput("volcano")%>% withSpinner(color="#0dc5c1")
                                         ),
                                         box(
                                                 title = "MA plot",
                                                 solidHeader = TRUE,
                                                 status = "primary",
-                                                plotlyOutput("MA")
+                                                plotlyOutput("MA")%>% withSpinner(color="#0dc5c1")
                                         )
                                 ),
                                 fixedRow(
@@ -103,7 +148,7 @@ dashboardPage(
                                                         label = "log2 Fold-Change cutoff from input :", 
                                                         min = 0, 
                                                         max = 5, 
-                                                        value = 1),
+                                                        value = 1)
                                         ),
                                         box(
                                                 title = "SET UP FOR SUBSEQUENT ANALYSES",
@@ -117,6 +162,7 @@ dashboardPage(
                                                         value = 0.05)
                                         ),
                                 ),
+                                add_busy_spinner(spin = "fading-circle"),
                                 DT::dataTableOutput(outputId = "table")
                         ),
                         # Second tab content : GO Terms Enrichment
