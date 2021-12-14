@@ -292,4 +292,3 @@ function(input, output) {
                 })
         })
 }
-main
