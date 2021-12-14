@@ -66,7 +66,7 @@ dataset=dataset[grep(paste(sapply(strsplit(dataset$dataset, "_"), "[", 1),collap
 
 # Debut
 function(input, output) {
-        disable("start")
+        shinyjs::disable("start")
         observeEvent(input$file, {
           req(input$file)
           #test extension

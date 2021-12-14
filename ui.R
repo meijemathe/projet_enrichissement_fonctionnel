@@ -44,6 +44,7 @@ library(stringi)
 library(DT)
 library(plotly)
 library(htmlwidgets)
+library(biomartr)
 
 #####################################################################
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
@@ -170,3 +171,4 @@ dashboardPage(
                         )
                 )
         )
+)
