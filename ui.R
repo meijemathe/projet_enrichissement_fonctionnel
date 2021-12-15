@@ -22,6 +22,7 @@ if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
 if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
 if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
 if (!require('biomaRt', quietly = T)) BiocManager::install('biomaRt');
+if (!require('Biostrings', quietly = T)) BiocManager::install('Biostrings');
 if (!require('biomartr', quietly = T)) install.packages('biomartr');
 if (!require('stringr', quietly = T)) install.packages('stringr');
 if (!require('stringi', quietly = T)) install.packages('stringi');
@@ -39,6 +40,7 @@ library(shinycssloaders)
 library(shinyjs)
 library(shinyalert)
 library(biomaRt)
+library(Biostrings)
 library(biomartr)
 library(stringr)
 library(stringi)
