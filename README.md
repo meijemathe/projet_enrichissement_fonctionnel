@@ -1,6 +1,4 @@
 # projet_enrichissement_fonctionnel
-bonjour
 
-Bonjour
-
-Testing
+libcurl4-openssl-dev
+libssl-dev
