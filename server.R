@@ -58,7 +58,6 @@ name_short <- paste(sapply(strsplit(listGenomes(db="ensembl"), "_"), "[", 1)
                     %>%stri_extract_first_regex(".{1}"),
                     sapply(strsplit(listGenomes(db="ensembl"), "_"), "[", 2),
                     sep="")%>%
-        sort()%>%
         unique()
 
 mart<- useMart("ensembl")
