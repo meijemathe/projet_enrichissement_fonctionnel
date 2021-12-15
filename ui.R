@@ -22,6 +22,10 @@ if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
 if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
 if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
 if (!require('biomaRt', quietly = T)) BiocManager::install('biomaRt');
+if (!require('biomaRt', quietly = T)) install.packages('biomartr');
+if (!require('biomaRt', quietly = T)) BiocManager::install('pathview');
+if (!require('biomaRt', quietly = T)) BiocManager::install('clusterProfiler');
+if (!require('biomaRt', quietly = T)) BiocManager::install('reactomePA');
 if (!require('stringr', quietly = T)) install.packages('stringr');
 if (!require('stringi', quietly = T)) install.packages('stringi');
 if (!require('DT', quietly = T)) install.packages('DT');
@@ -29,9 +33,9 @@ if (!require('plotly', quietly = T)) install.packages('plotly');
 if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
 
 
-#BiocManager::install("biomaRt")
-# BiocManager::install("clusterProfiler")
-# BiocManager::install("pathview")
+library(pathview)
+library(reactomePA)
+library(clusterProfiler)
 library(shiny)
 library(shinydashboard)
 library(shinybusy)
@@ -39,44 +43,14 @@ library(shinycssloaders)
 library(shinyjs)
 library(shinyalert)
 library(biomaRt)
+library(biomartr)
 library(stringr)
 library(stringi)
 library(DT)
 library(plotly)
 library(htmlwidgets)
-library(biomartr)
 
 #####################################################################
-httr::set_config(httr::config(ssl_verifypeer = FALSE))
-
-############################################### Biomart liste ID ############################################################"
-
-# Adaptation liste en fonction deux listes récupérées par Biomart qui sont de tailles différentes. Conversion dans server.R
-#Ordre mauvais des colonnes
-name_short <- paste(sapply(strsplit(listGenomes(db="ensembl"), "_"), "[", 1)
-                   %>%stri_extract_first_regex(".{1}"),
-                   sapply(strsplit(listGenomes(db="ensembl"), "_"), "[", 2),
-                   sep="")%>%
-                   unique()
-
-liste<-listGenomes(db="ensembl") %>%
-        str_extract("[^_]+_[^_]+") %>%
-        gsub(pattern = "_",replacement = " ") %>%
-        unique() %>%
-        str_to_title()
-
-frame_names=as.data.frame(cbind(name_short,liste))
-frame_names=frame_names[order(frame_names$liste),]
-
-###Récupère dataframe avec id dataset à utiliser, description espèce et version génome
-mart<- useMart("ensembl")
-dataset<-biomaRt::listDatasets(mart)
-
-frame_names=frame_names[grep(paste(sapply(strsplit(dataset$dataset, "_"), "[", 1),collapse="|"), frame_names$name_short),]
-
-### Préparation liste pour menu déroulant, enlever tiret bas, unique, majuscule début mot
-choices=setNames(frame_names$liste,frame_names$liste)
-###############################################################################################################################
 
 dashboardPage(
         skin = "black",
@@ -93,11 +67,7 @@ dashboardPage(
                                 ".csv")),
                         # verbatimTextOutput("file"),
                         # Select box : organism selection
-                        selectInput("select_organism", label = "Organism of interest",
-                                    choices=choices,
-                                 #choices = list("Homo Sapiens" = "H. Sapiens", "Mus musculus" = "M. Musculus", "Arabidopsis Thaliana" = "A. Thaliana"),                                
-                                 selected = 1
-                        ),
+                        uiOutput("choices"),
                         # verbatimTextOutput("select_organism"),
                         shinyjs::useShinyjs(),
                         useShinyalert(),
