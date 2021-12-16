@@ -204,14 +204,21 @@ function(input, output) {
 
                 # Data view
                 output$table <- DT::renderDataTable({
-                  req(coord())
-
+                  req(data())
                   df <- data()
-                  x <- coord()$x
-                  y <- coord()$y
 
-                  df[ which(df$log2FC >= x[1] & df$log2FC <= x[2] &
-                      df$log2padj >= y[1] & df$log2padj <= y[2]), ]
+                  if(is.null(coord()))
+                  {
+                    return(df)
+                  }
+                  else
+                  {
+                    x <- coord()$x
+                    y <- coord()$y
+
+                    return(df[ which(df$log2FC >= x[1] & df$log2FC <= x[2] &
+                        df$log2padj >= y[1] & df$log2padj <= y[2]), ])
+                  }
                 },
                 extensions = 'Buttons',
                 options = list(
