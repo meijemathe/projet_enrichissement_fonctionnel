@@ -212,8 +212,18 @@ function(input, output) {
 
                   df[ which(df$log2FC >= x[1] & df$log2FC <= x[2] &
                       df$log2padj >= y[1] & df$log2padj <= y[2]), ]
-                })
-          
+                }),
+                extensions = 'Buttons',
+                options = list(
+                        paging = TRUE,
+                        searching = TRUE,
+                        fixedColumns = TRUE,
+                        autoWidth = TRUE,
+                        ordering = TRUE,
+                        dom = 'tB',
+                        buttons = c('csv', 'excel')),
+                class = "display"
+                )
                 MAPlot <- reactive({
                         df <- data()
                         df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
