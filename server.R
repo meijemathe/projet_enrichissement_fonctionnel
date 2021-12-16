@@ -132,17 +132,19 @@ function(input, output) {
                         req(input$file)
                         df <- read.csv(input$file$datapath, sep = ";")
                         df["log2padj"] <- -log2(df["padj"])
+                        print(colnames(df))
                         if(startsWith(df$ID[1], "ENS")){
                                 selected<-grep(paste(stri_extract_first_regex(input$select_organism,".{1}"),unlist(strsplit(input$select_organism," "))[2],sep=""),dataset$dataset,ignore.case = TRUE,value=TRUE)
-                                mart=useDataset("mmusculus_gene_ensembl",mart=mart)   
+                                mart=useDataset(selected,mart=mart)   
                                 genes <- getBM(filters = "ensembl_gene_id",
                                                attributes = c("ensembl_gene_id","entrezgene_id"),
                                                values = df$ID, 
                                                mart = mart)
                                 #changer ordre colonnes data frame
                                 frame<-merge(df, genes, by.x ="ID", by.y = "ensembl_gene_id")
-                                frame<-frame[,c("GeneName", "ID", "entrezgene_id","baseMean", "log2FC", "pval", "padj")]
-                                colnames(frame)<-c("GeneName", "ID", "EntrezID","baseMean", "log2FC", "pval", "padj")
+                                frame<-frame[,c("GeneName", "ID", "entrezgene_id","baseMean", "log2FC", "pval", "padj","log2padj")]
+                                colnames(frame)<-c("GeneName", "ID", "EntrezID","baseMean", "log2FC", "pval", "padj","log2padj")
+                                print(colnames(frame))
                                 frame
                         }
                         else{
