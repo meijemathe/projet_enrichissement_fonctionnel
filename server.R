@@ -212,7 +212,7 @@ function(input, output) {
 
                   df[ which(df$log2FC >= x[1] & df$log2FC <= x[2] &
                       df$log2padj >= y[1] & df$log2padj <= y[2]), ]
-                }),
+                },
                 extensions = 'Buttons',
                 options = list(
                         paging = TRUE,
