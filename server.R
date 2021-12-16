@@ -184,7 +184,9 @@ function(input, output) {
                 })
                 output$volcano <- renderPlotly2({
                         p <- volcanoPlot()
-                        as_widget(p) %>% onRender(addHoverBehavior)
+                        as_widget(p) %>% 
+                          onRender(addHoverBehavior) %>%
+                          config(modeBarButtons = list(list("zoomIn2d"), list("zoomOut2d"), list("select2d"), list("resetScale2d"), list("toImage")))
                         
                 })
                 # Print genes name when the curser hovers on the points
@@ -208,8 +210,6 @@ function(input, output) {
                   x <- coord()$x
                   y <- coord()$y
 
-                  print(names(df))
-
                   df[ which(df$log2FC >= x[1] & df$log2FC <= x[2] &
                       df$log2padj >= y[1] & df$log2padj <= y[2]), ]
                 })
@@ -228,9 +228,12 @@ function(input, output) {
                                        title = list(text = paste("MA Plot ", input$select_organism), x = 0))
                         
                 })
-                output$MA <- renderPlotly2({
+                output$MA <- renderPlotly2({  
                         p <- MAPlot()
-                        as_widget(p) %>% onRender(addHoverBehavior)
+                        as_widget(p) %>% 
+                          onRender(addHoverBehavior) %>%
+                          config(modeBarButtons = list(list("zoomIn2d"), list("zoomOut2d"), list("select2d"), list("resetScale2d"), list("toImage")))
+
                 })
         })
 }
