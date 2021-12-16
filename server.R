@@ -92,6 +92,12 @@ choices=setNames(frame_names$liste,frame_names$liste)
 
 # Debut
 function(input, output) {
+        output$choices<- renderUI({
+                 selectInput("select_organism", label = "Organism of interest",
+                           choices=choices,
+                           selected = 1
+                 )
+         })
         shinyjs::disable("start")
         observeEvent(input$file, {
                 req(input$file)
