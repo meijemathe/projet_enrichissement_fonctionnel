@@ -149,10 +149,7 @@ function(input, output) {
                                 frame
                         })
                 }
-                # Data view
-                output$table <- DT::renderDataTable({
-                        data2()
-                })
+
                 # Create the action when the curser hovers on the plot
                 addHoverBehavior <- "function(el, x){
                         el.on('plotly_hover', function(data){
@@ -194,6 +191,29 @@ function(input, output) {
                 output$hover <- renderText({
                         input$hover_data
                 })
+          
+                # Coord selected box in graph
+                coord <- reactive({
+                  req(volcanoPlot())
+
+                  event_register(volcanoPlot(), 'plotly_brushed')
+                  event_data(event = 'plotly_brushed')
+                })
+
+                # Data view
+                output$table <- DT::renderDataTable({
+                  req(coord())
+
+                  df <- data()
+                  x <- coord()$x
+                  y <- coord()$y
+
+                  print(names(df))
+
+                  df[ which(df$log2FC >= x[1] & df$log2FC <= x[2] &
+                      df$log2padj >= y[1] & df$log2padj <= y[2]), ]
+                })
+          
                 MAPlot <- reactive({
                         df <- data()
                         df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
