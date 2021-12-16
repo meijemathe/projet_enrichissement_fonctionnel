@@ -225,7 +225,7 @@ function(input, output) {
                 extensions = 'Buttons',
                 options = list(
                         fixedColumns = TRUE,
-                        autoWidth = TRUE,
+                        autoWidth = FALSE,
                         ordering = TRUE,
                         scrollX = TRUE,
                         dom = 'Bfrtip',
