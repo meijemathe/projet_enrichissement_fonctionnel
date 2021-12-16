@@ -224,12 +224,11 @@ function(input, output) {
                 },
                 extensions = 'Buttons',
                 options = list(
-                        paging = TRUE,
-                        searching = TRUE,
                         fixedColumns = TRUE,
                         autoWidth = TRUE,
                         ordering = TRUE,
-                        dom = 'Bftsp',
+                        scrollX = TRUE,
+                        dom = 'Bfrtip',
                         buttons = c('csv', 'excel')),
                 class = "display"
                 )
