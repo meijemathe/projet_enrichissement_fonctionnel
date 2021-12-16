@@ -227,7 +227,7 @@ function(input, output) {
                         fixedColumns = TRUE,
                         autoWidth = TRUE,
                         ordering = TRUE,
-                        dom = 'tB',
+                        dom = 'Bftsp',
                         buttons = c('csv', 'excel')),
                 class = "display"
                 )
