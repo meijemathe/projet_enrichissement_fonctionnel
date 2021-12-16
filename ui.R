@@ -88,21 +88,23 @@ dashboardPage(
                 tabItems(
                         # First tab content : Whole data inspection
                         tabItem(tabName = "whole_data_inspection",
-                                fluidRow(
-                                        # Box volcano plot
-                                        box(
-                                                title = "Volcano plot",
-                                                solidHeader = TRUE,
-                                                status = "primary",
-                                                plotlyOutput("volcano")%>% withSpinner(color="#0dc5c1")
-                                        ),
-                                        box(
-                                                title = "MA plot",
-                                                solidHeader = TRUE,
-                                                status = "primary",
-                                                plotlyOutput("MA")%>% withSpinner(color="#0dc5c1")
+                                conditionalPanel('input.start',{
+                                        fluidRow(
+                                                # Box volcano plot
+                                                box(
+                                                        title = "Volcano plot",
+                                                        solidHeader = TRUE,
+                                                        status = "primary",
+                                                        plotlyOutput("volcano")%>% withSpinner(color="#0dc5c1")
+                                                ),
+                                                box(
+                                                        title = "MA plot",
+                                                        solidHeader = TRUE,
+                                                        status = "primary",
+                                                        plotlyOutput("MA")%>% withSpinner(color="#0dc5c1")
+                                                )
                                         )
-                                ),
+                                }),
                                 fixedRow(
                                         # Box selection of log2FC and p-value
                                         box(
