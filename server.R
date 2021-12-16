@@ -132,7 +132,6 @@ function(input, output) {
                         req(input$file)
                         df <- read.csv(input$file$datapath, sep = ";")
                         df["log2padj"] <- -log2(df["padj"])
-                        print(colnames(df))
                         if(startsWith(df$ID[1], "ENS")){
                                 selected<-grep(paste(stri_extract_first_regex(input$select_organism,".{1}"),unlist(strsplit(input$select_organism," "))[2],sep=""),dataset$dataset,ignore.case = TRUE,value=TRUE)
                                 mart=useDataset(selected,mart=mart)   
@@ -144,7 +143,7 @@ function(input, output) {
                                 frame<-merge(df, genes, by.x ="ID", by.y = "ensembl_gene_id")
                                 frame<-frame[,c("GeneName", "ID", "entrezgene_id","baseMean", "log2FC", "pval", "padj","log2padj")]
                                 colnames(frame)<-c("GeneName", "ID", "EntrezID","baseMean", "log2FC", "pval", "padj","log2padj")
-                                print(colnames(frame))
+                                validate(need(dim(frame)[1]>0, "No ID found :\n Are you sure you have selected the right organism ?"))
                                 frame
                         }
                         else{
