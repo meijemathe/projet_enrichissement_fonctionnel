@@ -141,7 +141,64 @@ dashboardPage(
                                 DT::dataTableOutput(outputId = "table")
                         ),
                         # Second tab content : GO Terms Enrichment
-                        tabItem(tabName = "GO_enrichment"
+                        tabItem(tabName = "GO_enrichment",
+                                fluidRow(
+                                        box(
+                                        title = "Analysis method", 
+                                        radioButtons(inputId = "go_analysis_method", 
+                                                     label = NULL, 
+                                                     choiceValues = c("ORA","GSEA"), 
+                                                     choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                        ),
+                                        hr(),
+                                        radioButtons("go_filter",
+                                                     label = NULL,
+                                                     choiceValue = c("DEG+", "DEG-", "both"),
+                                                     choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
+                                        )
+                                ),
+                                box(
+                                        title = "Gene ontology settings", 
+                                        selectInput("go_ontology", 
+                                                    label = NULL, 
+                                                    choices = c("Biological process", "Molecular function", "Cellular component")
+                                        ),
+                                        br(),
+                                        radioButtons("go_level",
+                                                     label = NULL,
+                                                     choiceValue = c("all_level", "one_level"),
+                                                     choiceNames = c("All-level GO terms", "One-level GO terms")
+                                        ),
+                                        conditionalPanel("input.go_level == 'one_level'", 
+                                                         sliderInput("go_level_selected",
+                                                                     label = NULL,
+                                                                     min = 1, max = 10, value = 3
+                                                         )
+                                        )
+                                )
+                                ),
+                                fluidRow(
+                                        box(
+                                                title = "Barplot",
+                                                solidHeader = TRUE,
+                                                status = "primary",
+                                                plotlyOutput("GO_barplot")%>% withSpinner(color="#0dc5c1")
+                                        ),
+                                        box(
+                                                title = "Dotplot",
+                                                solidHeader = TRUE,
+                                                status = "primary",
+                                                plotlyOutput("GO_dotplot")%>% withSpinner(color="#0dc5c1")
+                                        )
+                                ),
+                                box(
+                                        sliderInput("go_pvalue",
+                                                    min = 0, 
+                                                    max = 1, 
+                                                    value = 0.05, 
+                                                    label = "Select a adjusted p-value cutoff"
+                                        )
+                                )
                         )
                 )
         )
