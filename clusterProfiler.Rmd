@@ -1,0 +1,250 @@
+---
+title: "cluster Profiler tutorial"
+author: "MM"
+date: "1/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+https://bioconductor.statistik.tu-dortmund.de/packages/3.6/bioc/vignettes/clusterProfiler/inst/doc/clusterProfiler.html
+
+```{r}
+# LIBRARIES
+library(readr)
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(topGO)
+library(pathview)
+library(biomaRt)
+```
+
+```{r}
+# IMPORT DATA
+data <- read_delim("~/Documents/M2.1BIMS/UE5_Bioinformatique_en_sciences_omiques/exemple.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+```
+```{r}
+# set the desire organism
+organism = "org.Mm.eg.db"
+BiocManager::install(organism, character.only = TRUE)
+library(organism, character.only = TRUE)
+```
+
+```{r}
+## =======================================================================
+## DATA PREPARATION 
+## =======================================================================
+# select log2 fold change 
+original_gene_list <- data$log2FC
+# set gene names
+names(original_gene_list) <- data$ID
+# omit any NA values 
+gene_list<-na.omit(original_gene_list)
+# sort the list in decreasing order (required for clusterProfiler)
+gene_list = sort(gene_list, decreasing = TRUE)
+```
+
+## GO OVER REPRESENTATION ANALYSIS
+```{r}
+ego <- enrichGO(gene = data$ID,
+                OrgDb  = organism,
+                keyType = 'ENSEMBL',
+                ont = "CC",
+                pAdjustMethod = "BH",
+                pvalueCutoff  = 0.01,
+                qvalueCutoff  = 0.05)
+```
+
+```{r}
+# BARPLOT
+barplot(ego, showCategory = 10)
+```
+```{r}
+# GOPLOT
+goplot(ego, showCategory = 10)
+```
+
+```{r}
+plotGOgraph(ego)
+```
+
+## GO GENE SET ENRICHMENT ANALYSIS
+```{r}
+gsego <- gseGO(geneList=gene_list, 
+             ont ="ALL", 
+             keyType = "ENSEMBL", 
+             nPerm = 10000, 
+             minGSSize = 3, 
+             maxGSSize = 800, 
+             pvalueCutoff = 0.05, 
+             verbose = TRUE, 
+             OrgDb = organism, 
+             pAdjustMethod = "none")
+```
+```{r}
+# DOTPLOT
+require(DOSE)
+dotplot(gsego, showCategory=10, split=".sign", font.size = 7) + facet_grid(.~.sign)
+```
+```{r}
+# GSEA PLOT
+# Use the `Gene Set` param for the index in the title, and as the value for geneSetId
+gseaplot(gsego, by = "all", title = gsego$Description[1], geneSetID = 1)
+gseaplot(gsego, by = "all", title = gsego$Description[2], geneSetID = 1)
+gseaplot(gsego, by = "all", title = gsego$Description[3], geneSetID = 2)
+```
+
+```{r}
+# EMAPLOT
+data2 <- pairwise_termsim(gsego)
+emapplot(data2, showCategory = 20)
+```
+
+## PATHWAY OVER REPRESENTATION ANALYSIS
+```{r}
+## =======================================================================
+## GET ENTREZ IDS
+## =======================================================================
+ids<-bitr(names(original_gene_list), fromType = "ENSEMBL", toType = "ENTREZID", OrgDb=organism)
+# remove duplicate IDS (here I use "ENSEMBL", but it should be whatever was selected as keyType)
+dedup_ids = ids[!duplicated(ids[c("ENSEMBL")]),]
+
+# Create a new dataframe df2 which has only the genes which were successfully mapped using the bitr function above
+data2 = data[data$ID %in% dedup_ids$ENSEMBL,]
+
+# Create a new column in df2 with the corresponding ENTREZ IDs
+data2$Y = dedup_ids$ENTREZID
+
+# Create a vector of the gene unuiverse
+kegg_gene_list <- data2$log2FC
+
+# Name vector with ENTREZ ids
+names(kegg_gene_list) <- data2$Y
+
+# omit any NA values 
+kegg_gene_list<-na.omit(kegg_gene_list)
+
+# sort the list in decreasing order (required for clusterProfiler)
+kegg_gene_list = sort(kegg_gene_list, decreasing = TRUE)
+```
+```{r}
+ekk <- enrichKEGG(gene = data2$Y,
+                 organism = 'mmu',
+                 pvalueCutoff = 0.05)
+head(ekk)
+```
+```{r}
+# BARPLOT
+barplot(ekk, showCategory = 10)
+```
+## KEGG GENE SET ENRICHMENT ANALYSIS
+```{r}
+gsekk <- gseKEGG(geneList = kegg_gene_list,
+               organism = 'mmu',
+               pvalueCutoff = 0.05,
+               verbose = FALSE)
+head(gsekk)
+```
+
+```{r}
+# DOTPLOT
+dotplot(gsekk, showCategory = 10, title = "Enriched Pathways" , split=".sign") + facet_grid(.~.sign)
+```
+```{r}
+gseaplot(gsekk, by = "all", title = gsekk$Description[1], geneSetID = 1)
+gseaplot(gsekk, by = "all", title = gsekk$Description[3], geneSetID = 1)
+```
+```{r}
+# Produce the native KEGG plot (PNG)
+pathview(gene.data=kegg_gene_list, pathway.id=gsekk[1]$ID, species = "mmu")
+# Produce a different plot (PDF) (not displayed here)
+knitr::include_graphics(paste(gsekk[1]$ID, ".pathview.png", sep = ""))
+```
+
+```{r}
+# Produce the native KEGG plot (PNG)
+pathview(gene.data=kegg_gene_list, pathway.id=gsekk[2]$ID, species = "mmu")
+# Produce a different plot (PDF) (not displayed here)
+knitr::include_graphics(paste(gsekk[2]$ID, ".pathview.png", sep = ""))
+```
+
+## DOMAINS OVER REPRESENTATION ANALYSIS
+```{r}
+## =======================================================================
+## GET REFSEQ IDS
+## =======================================================================
+ids<-bitr(names(original_gene_list), fromType = "ENSEMBL", toType = "REFSEQ", OrgDb=organism)
+# remove duplicate IDS (here I use "ENSEMBL", but it should be whatever was selected as keyType)
+dedup_ids = ids[!duplicated(ids[c("ENSEMBL")]),]
+
+# Create a new dataframe df2 which has only the genes which were successfully mapped using the bitr function above
+data3 = data[data$ID %in% dedup_ids$ENSEMBL,]
+
+# Create a new column in df2 with the corresponding ENTREZ IDs
+data3$Y = dedup_ids$REFSEQ
+
+# Create a vector of the gene unuiverse
+domain_gene_list <- data3$log2FC
+
+# Name vector with ENTREZ ids
+names(domain_gene_list) <- data3$Y
+
+# omit any NA values 
+domain_gene_list<-na.omit(domain_gene_list)
+
+# sort the list in decreasing order (required for clusterProfiler)
+domain_gene_list = sort(domain_gene_list, decreasing = TRUE)
+```
+
+```{r}
+# DOMAINS ANNOTATION FOR INTEREST LIST
+ensembl = useMart(biomart = "ensembl", dataset = "mmusculus_gene_ensembl")
+
+refseqids = names(domain_gene_list)
+domains = getBM(attributes = c("entrezgene_id", "refseq_mrna", "interpro", "interpro_description"), 
+             filters = "refseq_mrna",
+             values = refseqids, 
+             mart = ensembl)
+domains
+```
+```{r}
+# REFERENCE GENE LIST
+gene_ref <- keys(org.Mm.eg.db, "ENTREZID")
+
+# DOMAINS ANNOTATION FOR REFERENCE LIST
+domain_ref_id <- keys(org.Mm.eg.db, "REFSEQ")
+domain_ref = getBM(attributes = c("entrezgene_id", "refseq_mrna", "interpro", "interpro_description"), 
+             filters = "refseq_mrna",
+             values = domain_ref_id, 
+             mart = ensembl)
+```
+
+
+```{r}
+# DATATABLE : Interpro ID, m, X, BgRatio, GeneRatio, pvalue, adjusted pvalue
+table <- data.frame(interproID = unique(domain_ref$interpro), domain = unique(domain_ref$interpro_description))
+k = length(gene_list)
+n = length(gene_ref)
+table$m <- table(domain_ref$interpro)[table$interpro]
+table$X <- table(domains$interpro)[table$interpro]
+table <- na.omit(table)
+table$BgRatio <- signif(100*table$m/(table$m+n), 3)
+table$GeneRatio <- signif(100*table$X/k, 3)
+table$pvalue <- signif(phyper(table$X-1, table$m, n, k, lower.tail = FALSE), digits = 6)
+table$p.adjust = signif(p.adjust(table$pvalue, method = "hochberg"), digits = 6)
+```
+
+```{r}
+# FINAL RESULTS
+res <- table[c("interproID","pvalue","p.adjust","BgRatio","GeneRatio","X","domain")]
+head(res)
+```
+## DOMAINS GENE SET ENRICHMENT ANALYSIS
+```{r}
+GSEA(domain_gene_list, )
+```
+
+
