@@ -4,11 +4,11 @@
 
 ![Organigramme](https://github.com/meijemathe/projet_enrichissement_fonctionnel/blob/main/img/organigramme.png)
 
-Présentation projet (contexte, but, team EnF’R)
-Description du repo git (organigramme)
-comment installer l’appli et la lancer 
-erreurs d’installation 
-Utilisation : présentation des onglets (but), bonnes pratiques d’utilisations (warnings, erreurs …)
+* Présentation projet (contexte, but, team EnF’R)
+* Description du repo git (organigramme)
+* comment installer l’appli et la lancer 
+* erreurs d’installation 
+* Utilisation : présentation des onglets (but), bonnes pratiques d’utilisations (warnings, erreurs …)
 
 
 
