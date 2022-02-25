@@ -33,6 +33,7 @@ if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
 if (!require('clusterProfiler', quietly = T)) BiocManager::install('clusterProfiler');
 if (!require('pathview', quietly = T)) BiocManager::install('pathview');
 if (!require('ReactomePA', quietly = T)) BiocManager::install('ReactomePA');
+if (!require('AnnotationHub', quietly = T)) BiocManager::install('AnnotationHub');
 
 library(shiny)
 library(shinydashboard)
