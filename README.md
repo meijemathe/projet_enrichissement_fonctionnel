@@ -1,11 +1,8 @@
 ########### EN COURS DE REDACTION ################################
 
-![Organigramme](https://github.com/meijemathe/projet_enrichissement_fonctionnel/blob/main/img/organigramme.png)
-
 # Enrichissement Fonctionnel avec R
 
-
-![248052832_1144009062791166_3117310044874772582_n-removebg-preview](https://user-images.githubusercontent.com/76952273/146406179-0c34461b-0e2d-471f-9784-4ea19238a1c1.png)
+![Organigramme](https://github.com/meijemathe/projet_enrichissement_fonctionnel/blob/main/img/organigramme.png)
 
 Bonne version de R : 
 R version 4.1.2 (2021-11-01) -- "Bird Hippie"
