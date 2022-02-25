@@ -105,13 +105,17 @@ ui = dashboardPage(
                                 conditionalPanel('input.start',{
                                         fluidRow(
                                                 # Box volcano plot
-                                                box2(
-                                                        title = "Volcano plot",
-                                                        plotlyOutput("volcano")%>% withSpinner(color="#0dc5c1")
+                                                column(width = 6,
+                                                        box2(
+                                                                title = "Volcano plot",
+                                                                plotlyOutput("volcano")%>% withSpinner(color="#0dc5c1")
+                                                        )
                                                 ),
-                                                box2(
-                                                        title = "MA plot",
-                                                        plotlyOutput("MA")%>% withSpinner(color="#0dc5c1")
+                                                column(width = 6,
+                                                        box2(
+                                                                title = "MA plot",
+                                                                plotlyOutput("MA")%>% withSpinner(color="#0dc5c1")
+                                                        )
                                                 )
                                         )
                                 }),
