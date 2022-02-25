@@ -1,6 +1,6 @@
 ########### EN COURS DE REDACTION ################################
 
-![Organigramme](https://github.com/meijemathe/projet_enrichissement_fonctionnel/tree/main/img/organigramme.png)
+![Organigramme](https://github.com/meijemathe/projet_enrichissement_fonctionnel/blob/main/img/organigramme.png)
 
 # Enrichissement Fonctionnel avec R
 
