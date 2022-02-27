@@ -29,7 +29,7 @@ libcurl4-openssl-dev
 libssl-dev
 
 Packages :  
-shiny : 
+shiny :   
 W Chang, J Cheng, J Allaire, Y Xie, J McPherson - R package version (2017) Shiny: web application framework for R.  
 shinydashboard  
 shinybusy  
