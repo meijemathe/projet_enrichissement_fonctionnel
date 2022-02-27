@@ -45,6 +45,8 @@ plotly
 htmlwidgets  
 clusterProfiler  
 pathview  
+[7] Luo, Weijun, Brouwer and Cory (2013). “Pathview: an R/Bioconductor package for pathway-based data
+integration and visualization.” Bioinformatics, 29(14), pp. 1830-1831. doi: 10.1093/bioinformatics/btt285.  
 ReactomePA  
 AnnotationHub  
 enrichplot  
