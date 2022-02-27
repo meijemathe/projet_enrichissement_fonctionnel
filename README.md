@@ -29,7 +29,8 @@ libcurl4-openssl-dev
 libssl-dev
 
 Packages :  
-shiny  
+shiny : 
+W Chang, J Cheng, J Allaire, Y Xie, J McPherson - R package version (2017) Shiny: web application framework for R.  
 shinydashboard  
 shinybusy  
 shinycssloaders  
@@ -43,9 +44,11 @@ stringi
 DT  
 plotly  
 htmlwidgets  
-clusterProfiler  
-pathview  
-[7] Luo, Weijun, Brouwer and Cory (2013). “Pathview: an R/Bioconductor package for pathway-based data
+clusterProfiler :  
+Yu G, Wang L, Han Y and He Q (2012). “clusterProfiler: an R package for comparing biological themes among gene
+clusters.” OMICS: A Journal of Integrative Biology, 16(5), pp. 284-287. doi: 10.1089/omi.2011.0118.  
+pathview :   
+Luo, Weijun, Brouwer and Cory (2013). “Pathview: an R/Bioconductor package for pathway-based data
 integration and visualization.” Bioinformatics, 29(14), pp. 1830-1831. doi: 10.1093/bioinformatics/btt285.  
 ReactomePA  
 AnnotationHub  
