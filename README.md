@@ -27,3 +27,27 @@ A installer :
 
 libcurl4-openssl-dev  
 libssl-dev
+
+Packages :  
+shiny  
+shinydashboard  
+shinybusy  
+shinycssloaders  
+shinyjs  
+shinyalert  
+biomaRt  
+Biostrings  
+biomartr  
+stringr  
+stringi  
+DT  
+plotly  
+htmlwidgets  
+clusterProfiler  
+pathview  
+ReactomePA  
+AnnotationHub  
+enrichplot  
+topGO  
+ggplot2  
+DOSE  
