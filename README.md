@@ -38,7 +38,10 @@ shinyjs
 shinyalert  
 biomaRt  
 Biostrings  
-biomartr  
+biomartr  :
+Drost HG, Paszkowski J. Biomartr: genomic data retrieval with R. Bioinformatics (2017) 33(8): 1216-1217. doi:10.1093/bioinformatics/btw821.
+
+
 stringr  
 stringi  
 DT  
@@ -55,4 +58,5 @@ AnnotationHub
 enrichplot  
 topGO  
 ggplot2  
-DOSE  
+DOSE  :
+Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an R/Bioconductor package for Disease Ontology Semantic and Enrichment analysis. Bioinformatics 2015, 31(4):608-609
