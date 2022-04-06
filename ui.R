@@ -154,7 +154,7 @@ ui = dashboardPage(
                                         ),
                                 ),
                                 # add_busy_spinner(spin = "fading-circle", position = 'full-page'),
-                                add_busy_gif(src = 'hell_loader.gif', position = 'full-page'),
+                                add_busy_gif(src = 'loader.gif', position = 'full-page'),
                                 DT::dataTableOutput(outputId = "table")
                         ),
                         
