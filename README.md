@@ -29,34 +29,110 @@ libcurl4-openssl-dev
 libssl-dev
 
 Packages :  
-shiny :   
-W Chang, J Cheng, J Allaire, Y Xie, J McPherson - R package version (2017) Shiny: web application framework for R.  
-shinydashboard  
-shinybusy  
-shinycssloaders  
-shinyjs  
-shinyalert  
-biomaRt  
-Biostrings  
+shiny :     
+  Winston Chang, Joe Cheng, JJ Allaire, Carson Sievert, Barret Schloerke, Yihui
+  Xie, Jeff Allen, Jonathan McPherson, Alan Dipert and Barbara Borges (2021).
+  shiny: Web Application Framework for R. R package version 1.7.1.
+  https://CRAN.R-project.org/package=shiny
+
+shinydashboard :
+  Winston Chang and Barbara Borges Ribeiro (2021). shinydashboard: Create
+  Dashboards with 'Shiny'. R package version 0.7.2.
+  https://CRAN.R-project.org/package=shinydashboard
+  
+shinybusy :
+  Fanny Meyer and Victor Perrier (2022). shinybusy: Busy Indicators and
+  Notifications for 'Shiny' Applications. R package version 0.3.0.
+  https://CRAN.R-project.org/package=shinybusy
+
+shinycssloaders :
+  Andras Sali and Dean Attali (2020). shinycssloaders: Add Loading Animations to
+  a 'shiny' Output While It's Recalculating. R package version 1.0.0.
+  https://CRAN.R-project.org/package=shinycssloaders
+
+shinyjs :
+  Dean Attali (2021). shinyjs: Easily Improve the User Experience of Your Shiny
+  Apps in Seconds. R package version 2.1.0.
+  https://CRAN.R-project.org/package=shinyjs
+
+shinyalert :
+  Dean Attali and Tristan Edwards (2021). shinyalert: Easily Create Pretty Popup
+  Messages (Modals) in 'Shiny'. R package version 3.0.0.
+  https://CRAN.R-project.org/package=shinyalert
+
+biomaRt :
+  Mapping identifiers for the integration of genomic datasets with the
+  R/Bioconductor package biomaRt. Steffen Durinck, Paul T. Spellman, Ewan Birney
+  and Wolfgang Huber, Nature Protocols 4, 1184-1191 (2009).
+
+  BioMart and Bioconductor: a powerful link between biological databases and
+  microarray data analysis. Steffen Durinck, Yves Moreau, Arek Kasprzyk, Sean
+  Davis, Bart De Moor, Alvis Brazma and Wolfgang Huber, Bioinformatics 21,
+  3439-3440 (2005).
+  
+Biostrings :
+  H. Pagès, P. Aboyoun, R. Gentleman and S. DebRoy (2019). Biostrings: Efficient
+  manipulation of biological strings. R package version 2.54.0.
+
 biomartr  :
-Drost HG, Paszkowski J. Biomartr: genomic data retrieval with R. Bioinformatics (2017) 33(8): 1216-1217. doi:10.1093/bioinformatics/btw821.
+  Drost HG, Paszkowski J. Biomartr: genomic data retrieval with R. Bioinformatics (2017) 33(8): 1216-1217. doi:10.1093/bioinformatics/btw821.
 
+stringr :
+  Hadley Wickham (2019). stringr: Simple, Consistent Wrappers for Common String
+  Operations. R package version 1.4.0. https://CRAN.R-project.org/package=stringr
 
-stringr  
-stringi  
-DT  
-plotly  
-htmlwidgets  
-clusterProfiler :  
-Yu G, Wang L, Han Y and He Q (2012). “clusterProfiler: an R package for comparing biological themes among gene
-clusters.” OMICS: A Journal of Integrative Biology, 16(5), pp. 284-287. doi: 10.1089/omi.2011.0118.  
+stringi :
+  Gagolewski M (2021). “stringi: Fast and portable character string processing in
+  R.” _Journal of Statistical Software_. to appear.
+
+  Gagolewski M (2021). _stringi: Fast and portable character string processing in
+  R_. R package version 1.7.6, <URL: https://stringi.gagolewski.com/>.
+
+DT :
+  Yihui Xie, Joe Cheng and Xianying Tan (2022). DT: A Wrapper of the JavaScript
+  Library 'DataTables'. R package version 0.22.
+  https://CRAN.R-project.org/package=DT
+
+plotly :  
+  C. Sievert. Interactive Web-Based Data Visualization with R, plotly, and shiny.
+  Chapman and Hall/CRC Florida, 2020.
+
+htmlwidgets :
+  Ramnath Vaidyanathan, Yihui Xie, JJ Allaire, Joe Cheng, Carson Sievert and
+  Kenton Russell (2021). htmlwidgets: HTML Widgets for R. R package version
+  1.5.4. https://CRAN.R-project.org/package=htmlwidgets
+
+clusterProfiler :    
+  Guangchuang Yu, Li-Gen Wang, Yanyan Han and Qing-Yu He. clusterProfiler: an R
+  package for comparing biological themes among gene clusters. OMICS: A Journal
+  of Integrative Biology 2012, 16(5):284-287
+  
 pathview :   
-Luo, Weijun, Brouwer and Cory (2013). “Pathview: an R/Bioconductor package for pathway-based data
-integration and visualization.” Bioinformatics, 29(14), pp. 1830-1831. doi: 10.1093/bioinformatics/btt285.  
-ReactomePA  
-AnnotationHub  
-enrichplot  
-topGO  
-ggplot2  
+  Luo, W. and Brouwer C., Pathview: an R/Bioconductor package for pathway-based
+  data integration and visualization. Bioinformatics, 2013, 29(14): 1830-1831,
+  doi: 10.1093/bioinformatics/btt285
+  
+ReactomePA :
+  Guangchuang Yu, Qing-Yu He. ReactomePA: an R/Bioconductor package for reactome
+  pathway analysis and visualization. Molecular BioSystems 2016, 12(2):477-479
+
+AnnotationHub :
+  Martin Morgan (2019). AnnotationHub: Client to access AnnotationHub resources.
+  R package version 2.18.0.
+
+enrichplot :
+  Guangchuang Yu (2019). enrichplot: Visualization of Functional Enrichment
+  Result. R package version 1.6.1. https://github.com/GuangchuangYu/enrichplot
+
+topGO :
+  Adrian Alexa and Jorg Rahnenfuhrer (2019). topGO: Enrichment Analysis for Gene
+  Ontology. R package version 2.38.1.
+
+ggplot2 :
+  H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New
+  York, 2016.
+
 DOSE  :
-Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an R/Bioconductor package for Disease Ontology Semantic and Enrichment analysis. Bioinformatics 2015, 31(4):608-609
+  Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an
+  R/Bioconductor package for Disease Ontology Semantic and Enrichment analysis.
+  Bioinformatics 2015 31(4):608-609
