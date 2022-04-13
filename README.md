@@ -4,18 +4,27 @@
 
 ## Présentation du projet 
 ### Contexte et objectif(s) #TODO
-- Master + matière 
+
+Ce projet correspond à l'évaluation de l'UE UE5 Bioinformatique en Sciences Omiques 3 – Analyse de données de séquençage NGS et annotation du master BIMS de l'Université de Rouen Normandie. 
+
+Le but de ce projet est de coder en R Shiny un outil d'enrichissement fonctionnel. Cet outil .... # TODO
 - projet enrichissement fonctionnel, app shiny, les diverses analyses (renvoit partie présentation)
 
 
 ### L'équipe EnF'R
-- Présentation des membres noms, mails, master, 
-- Nom de l'équipe 
 
+L'équipe se nomme **EnF'R** qui signifie **En**richissement **F**onctionnel avec **R**. Elle est consituée de 4 membres, tous étudiants dans le master BIMS l'Université de Rouen Normandie. 
 
-## Description du repo git (organigramme) #TODO
+MATHE Meije : meije.mathe@univ-rouen.fr  
+PETY Solene : solene.pety@etu.univ-rouen.fr  
+LETERRIER Bryce : bryce.leterrier@univ-rouen.fr  
+OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr  
+
+## Description de l'espace GitHub #TODO
 
 ![Organigramme](https://github.com/meijemathe/projet_enrichissement_fonctionnel/blob/main/img/organigramme.png)
+
+Voici comment s'organise l'espace de dépôt GitHub. Dans un premier temps ... 
 
 
 ## Installation et lancement de l'application #TODO
