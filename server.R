@@ -80,6 +80,18 @@ data_db_ordered$V2<-gsub(".sqlite","",data_db_ordered$V2)
 choices=setNames(data_db_ordered$V1,data_db_ordered$V1)
 rm(data_db,ah,data_annot,liste_all)
 
+#####################################################################
+# Usefull functions
+#####################################################################
+download <- function(title,plotname){
+        downloadHandler(
+                filename = function() { title },
+                content = function(file) {
+                        ggsave(file, plot = plotname, device = "png")
+                        }
+                )
+}
+
 ############################################################################################################################
 
 # Debut
@@ -256,23 +268,57 @@ function(input, output) {
                         req(gene_list())
                         return(get_gsego(gene_list(), organism()))
                 })
-                output$GO_ORA_barplot <- renderPlot({
+                #barplot ORA
+                GO_ORA_barplot_input <- reactive({
                         req(ego())
                         barplot(ego(), showCategory = 10)
                 })
-                output$GO_ORA_goplot <- renderPlot({
+                output$GO_ORA_barplot <- renderPlot({
+                        print(GO_ORA_barplot_input())
+                })
+                #goplot ORA
+                GO_ORA_goplot_input <- reactive({
                         req(ego())
                         goplot(ego(), showCategory = 10)
                 })
-                output$GO_GSEA_dotplot <- renderPlot({
+                output$GO_ORA_goplot <- renderPlot({
+                        print(GO_ORA_goplot_input())
+                })
+                #dotplot GSEA
+                GO_GSEA_dotplot_input <- reactive({
                         req(gsego())
                         dotplot(gsego(), showCategory=10, split=".sign", font.size = 7) + 
                                 facet_grid(.~.sign)
                 })
-                output$GO_GSEA_plot <- renderPlot({
+                output$GO_GSEA_dotplot <- renderPlot({
+                        print(GO_GSEA_dotplot_input())
+                })
+                #plot GSEA
+                GO_GSEA_plot_input <- reactive({
                         req(gsego())
                         gseaplot(gsego(), by = "all", title = gsego()$Description[1], geneSetID = 1)
                 })
+                output$GO_GSEA_plot <- renderPlot({
+                        print(GO_GSEA_plot_input())
+                })
+                #boutons downloads
+                output$download_go_barplot <- download(
+                        paste('barplotORA.png', sep=''),
+                        GO_ORA_barplot_input()
+                        )
+                output$download_go_dotplot <- download(
+                        paste('dotplotORA.png', sep=''),
+                        GO_ORA_goplot_input()
+                )
+                output$download_go_gseaplot <- download(
+                        paste('ploGSEA.png', sep=''),
+                        GO_GSEA_dotplot_input()
+                )
+                output$download_go_goplot <- download(
+                        paste('goplotGSEA.png', sep=''),
+                        GO_GSEA_plot_input()
+                )
+                
 #####################################################################################
 ##                        Onglet Pathway Enrichment                                ##
 #####################################################################################
@@ -288,26 +334,62 @@ function(input, output) {
                         req(kegg_gene_list())
                         return(get_gsekk(kegg_gene_list()[[2]]))
                 })
-                output$path_barplot <- renderPlot({
+                #barplot ORA
+                path_barplot_input <- reactive({
                         req(ekk())
                         barplot(ekk(), showCategory = 10)
                 })
-                output$path_gseaplot <- renderPlot({
+                output$path_barplot <- renderPlot({
+                        print(path_barplot_input())
+                })
+                #plot GSEA
+                path_gseaplot_input <- reactive({
                         req(gsekk())
                         gseaplot(gsekk(), by = "all", title = gsekk()$Description[1], geneSetID = 1)
                 })
-                output$path_dotplot <- renderPlot({
+                output$path_gseaplot <- renderPlot({
+                        print(path_gseaplot_input())
+                })
+                #dotplot GSEA
+                path_dotplot_input <- reactive({
                         req(gsekk())
                         dotplot(gsekk(), showCategory = 10, title = "Enriched Pathways" , split=".sign") + 
                                 facet_grid(.~.sign)
                 })
-                output$path_pathplot <- renderImage({
+                output$path_dotplot <- renderPlot({
+                        print(path_dotplot_input())
+                })
+                #kegg_gene_list gsea
+                path_pathplot_input <- reactive({
                         req(gsekk())
                         pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = "mmu")
-                        print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
+                        #print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
+                })
+                output$path_pathplot <- renderImage({
+                        print(path_pathplot_input())
                         list(src = paste(gsekk()[1]$ID, ".pathview.png", sep = ""),
-                             alt = "This is alternate text")
+                            alt = "This is alternate text")
                         #knitr::include_graphics(paste(gsekk()[2]$ID, ".pathview.png", sep = ""))
-                }, deleteFile = TRUE)
+                }, deleteFile = FALSE)
+                #boutons downloads
+                output$download_path_barplot <- download(
+                        paste('path_barplotORA.png', sep=''),
+                        path_barplot_input()
+                )
+                output$download_path_dotplot <- download(
+                        paste('path_dotplotGSEA.png', sep=''),
+                        path_gseaplot_input()
+                )
+                output$download_path_gseaplot <- download(
+                        paste('path_plotGSEA.png', sep=''),
+                        path_dotplot_input()
+                )
+                #output$download_path_goplot <- downloadHandler(
+                #        filename = paste('path_goplotGSEA.png', sep=''),
+                #         contentType = "png",
+                #         content = function(file){
+                #                 file.copy(path_pathplot_input(), file)
+                #                 }
+                # )
         })
 }
