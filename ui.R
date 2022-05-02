@@ -401,6 +401,9 @@ ui = dashboardPage(
                                         plotlyOutput("domain_dotplot")%>% withSpinner(color="#0dc5c1")
                                 ),
                                 dataTableOutput("domain_datatable")
+                        ),
+                        tabItem(tabName = "about",
+                                includeMarkdown('README.md')
                         )
                 )
         )
