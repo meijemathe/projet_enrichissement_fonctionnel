@@ -22,7 +22,6 @@ OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
 
 ## Description de l'espace GitHub #TODO
 
-![Organigramme](https://github.com/meijemathe/projet_enrichissement_fonctionnel/blob/main/img/organigramme.png)
 ![Organigramme](img/organigramme.png)
 
 Voici comment s'organise l'espace de dépôt GitHub. Dans un premier temps ... 
