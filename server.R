@@ -362,7 +362,7 @@ function(input, output) {
                 #kegg_gene_list gsea
                 path_pathplot_input <- reactive({
                         req(gsekk())
-                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = "mmu")
+                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = organism())
                         #print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
                 })
                 output$path_pathplot <- renderImage({
