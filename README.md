@@ -36,6 +36,7 @@ OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
 
 Voici comment s'organise l'espace de dépôt GitHub. Dans un premier temps ... 
 
+# Détails sur les fichiers / dossiers 
 
 ## Installation et lancement de l'application #TODO
 
@@ -43,9 +44,9 @@ Rapidement + faire à la fin
 - Télécharger le dosser (screen tuto)
 - Recommander d'installer tous les packages à la main avant le début 
   
-## Format des données   
+## Format des données  #TODO 
 
-screens 
+screens => format imposé ! 
 - Noms colonnes
 - EnsemblID.....
 
