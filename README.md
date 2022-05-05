@@ -1,4 +1,5 @@
 ########### EN COURS DE REDACTION ################################
+# TODO : LOGO à faire pour dark mode > > gris comme les box (lignes et noms de fichiers)
 
 # Enrichissement Fonctionnel avec R
 
@@ -7,9 +8,18 @@
 
 Ce projet correspond à l'évaluation de l'UE UE5 Bioinformatique en Sciences Omiques 3 – Analyse de données de séquençage NGS et annotation du master BIMS de l'Université de Rouen Normandie. 
 
-Le but de ce projet est de coder en R Shiny un outil d'enrichissement fonctionnel. Cet outil .... # TODO
+Le but de ce projet est de coder une application R Shiny pour en faire un outil d'enrichissement fonctionnel. Cet outil .... # TODO
 - projet enrichissement fonctionnel, app shiny, les diverses analyses (renvoit partie présentation)
+"""
+Développement d’une chaîne de traitement et d’une application web en R pour
+l’Analyse d’Enrichissement fonctionnel en transcriptomique
 
+Le pipeline que vous développerez devra à partir d’une matrice de comptage issue d’une expérience
+de séquençage d’ARNm (DEG) en entrée fournir au biologiste en sortie les résultats d’enrichissement
+fonctionnel et représentations graphiques associées. Vous créerez une interface web sous la forme
+d’une application Shiny afin de permettre l’utilisation aisée par un non programmeur.
+
+"""
 
 ### L'équipe EnF'R
 
@@ -29,17 +39,19 @@ Voici comment s'organise l'espace de dépôt GitHub. Dans un premier temps ...
 
 ## Installation et lancement de l'application #TODO
 
+Rapidement + faire à la fin 
 - Télécharger le dosser (screen tuto)
 - Recommander d'installer tous les packages à la main avant le début 
   
 ## Format des données   
 
+screens 
 - Noms colonnes
 - EnsemblID.....
 
 ## Présentation des onglets et bonnes pratiques d’utilisations (warnings, erreurs …) #TODO
 
-- Vidéo ? (juste image qui montre le bon fonctionnement de l'appli 
+- Vidéo ? (juste image qui montre le bon fonctionnement de l'appli) => à la fin
 
 
 ## Erreurs communes #TODO
@@ -55,6 +67,7 @@ libssl-dev
 ### Données #TODO
 
 - Citation article contenant le jdd #TODO
+
 ### Packages #TODO
 
 **R** : R version 4.1.2 (2021-11-01) -- "Bird Hippie"
