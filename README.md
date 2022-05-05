@@ -31,6 +31,11 @@ Voici comment s'organise l'espace de dépôt GitHub. Dans un premier temps ...
 
 - Télécharger le dosser (screen tuto)
 - Recommander d'installer tous les packages à la main avant le début 
+  
+## Format des données   
+
+- Noms colonnes
+- EnsemblID.....
 
 ## Présentation des onglets et bonnes pratiques d’utilisations (warnings, erreurs …) #TODO
 
@@ -63,7 +68,7 @@ libssl-dev
 
 
 Packages :  
-**shiny** :     
+**shiny** :   
   Winston Chang, Joe Cheng, JJ Allaire, Carson Sievert, Barret Schloerke, Yihui
   Xie, Jeff Allen, Jonathan McPherson, Alan Dipert and Barbara Borges (2021).
   shiny: Web Application Framework for R. R package version 1.7.1.
@@ -127,7 +132,7 @@ Packages :
   Library 'DataTables'. R package version 0.22.
   https://CRAN.R-project.org/package=DT
 
-**plotly** :  
+**plotly** :
   C. Sievert. Interactive Web-Based Data Visualization with R, plotly, and shiny.
   Chapman and Hall/CRC Florida, 2020.
 
