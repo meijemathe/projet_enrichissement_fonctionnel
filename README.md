@@ -50,9 +50,17 @@ screens => format imposé !
 - Noms colonnes
 - EnsemblID.....
 
+Tableau en markdown + données d'exemple
+
 ## Présentation des onglets et bonnes pratiques d’utilisations (warnings, erreurs …) #TODO
 
 - Vidéo ? (juste image qui montre le bon fonctionnement de l'appli) => à la fin
+
+## Output attendus #TODO
+données d'exemples dispo : 
+screens de plot ? 
+
+
 
 
 ## Erreurs communes #TODO
