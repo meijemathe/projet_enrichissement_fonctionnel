@@ -1,5 +1,6 @@
 ########### EN COURS DE REDACTION ################################
 # TODO : LOGO à faire pour dark mode > > gris comme les box (lignes et noms de fichiers)
+# TODO : table des matières 
 
 # Enrichissement Fonctionnel avec R
 
