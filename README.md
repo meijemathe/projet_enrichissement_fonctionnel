@@ -41,6 +41,7 @@ Voici comment s'organise l'espace de dépôt GitHub. Dans un premier temps ...
 
 - Vérifier bonne version de R : commande #TODO
 - Sous Linux : certains packages ont besoin de ces librairies > à installer si cela ne fonctionne pas + commande #TODO
+- télécharger orgDg lors de la première utilisation
 
 libcurl4-openssl-dev  
 libssl-dev
