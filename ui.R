@@ -132,25 +132,16 @@ ui = dashboardPage(
                                                 title = "OPTIONS",
                                                 sliderInput(
                                                         inputId = "pvalue", 
-                                                        label = "fitted p-value cutoff from input :",
+                                                        label = "adjusted p-value cutoff from input :",
                                                         min = 0, 
                                                         max = 1,
-                                                        value = 0.05),
+                                                        value = 1),
                                                 sliderInput(
                                                         inputId = "FC", 
                                                         label = "log2 Fold-Change cutoff from input :", 
                                                         min = 0, 
                                                         max = 5, 
-                                                        value = 1)
-                                        ),
-                                        box2(
-                                                title = "SET UP FOR SUBSEQUENT ANALYSES",
-                                                sliderInput(
-                                                        inputId = "FC", 
-                                                        label = "fitted p-value cutoff for subsequent analyses :", 
-                                                        min = 0, 
-                                                        max = 1, 
-                                                        value = 0.05)
+                                                        value = 0)
                                         ),
                                 ),
                                 # add_busy_spinner(spin = "fading-circle", position = 'full-page'),
