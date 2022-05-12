@@ -259,12 +259,25 @@ function(input, output) {
                 organism <- reactive({
                         data_db_ordered[which(data_db_ordered$V1==input$select_organism),2]
                 })
-                gene_list <- reactive({
+                data_go <- reactive({
                         req(data())
+                        if(input$go_filter == 'DEG+'){
+                               return(data()[data()$log2FC > 0,])
+                        }
+                        else if(input$go_filter == 'DEG-'){
+                                return(data()[data()$log2FC < 0,])
+                        }
+                        else {
+                                return(data())
+                        }
+                        
+                })
+                gene_list <- reactive({
+                        req(data_go())
                         return(get_gene_list(data()))
                 })
                 ego <- reactive({
-                        req(data())
+                        req(data_go())
                         return(get_ego(data(), organism()))
                 })
                 gsego <- reactive({
