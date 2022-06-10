@@ -389,10 +389,50 @@ function(input, output) {
                         req(kegg_gene_list())
                         return(get_ekk(kegg_gene_list()[[1]]))
                 })
+                output$table_ekk <- DT::renderDataTable({
+                  req(ekk())
+                  df <- as.data.frame(ekk())
+                  df <-df[ , -which(names(df) %in% c("geneID"))]
+                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'">KEGG link</a>')
+                  df <- df %>% add_column(Links, .after ="ID")
+                  return(df)
+                },
+                extensions = 'Buttons',
+                rownames = FALSE,
+                escape = FALSE,
+                options = list(
+                  fixedColumns = TRUE,
+                  autoWidth = FALSE,
+                  ordering = TRUE,
+                  scrollX = TRUE,
+                  dom = 'Bfrtip',
+                  buttons = c('csv', 'excel')),
+                class = "display"
+                )
                 gsekk <- reactive({
                         req(kegg_gene_list())
                         return(get_gsekk(kegg_gene_list()[[2]]))
                 })
+                output$table_gsekk <- DT::renderDataTable({
+                  req(gsekk())
+                  df <- as.data.frame(gsekk()@result)
+                  df <-df[ , -which(names(df) %in% c("core_enrichment"))]
+                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'">KEGG link</a>')
+                  df <- df %>% add_column(Links, .after ="ID")
+                  return(df)
+                },
+                extensions = 'Buttons',
+                rownames = FALSE,
+                escape = FALSE,
+                options = list(
+                  fixedColumns = TRUE,
+                  autoWidth = FALSE,
+                  ordering = TRUE,
+                  scrollX = TRUE,
+                  dom = 'Bfrtip',
+                  buttons = c('csv', 'excel')),
+                class = "display"
+                )
                 #barplot ORA
                 path_barplot_input <- reactive({
                         req(ekk())
