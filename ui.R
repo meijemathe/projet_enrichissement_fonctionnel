@@ -277,35 +277,38 @@ ui = dashboardPage(
                         # Third tab content : Pathways Enrichment
                         tabItem(tabName = "path_enrichment",
                                 fluidRow(
-                                        column(
-                                                width = 6,
-                                                box2(
-                                                        title = "Analysis method", 
-                                                        radioButtons(inputId = "path_analysis_method", 
-                                                                     label = NULL, 
-                                                                     choiceValues = c("ORA","GSEA"), 
-                                                                     choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                         box2(
+                                              title = "Analysis method", 
+                                              fluidRow(
+                                                      column(
+                                                              width = 6,
+                                                              radioButtons(inputId = "path_analysis_method", 
+                                                                           label = NULL, 
+                                                                           choiceValues = c("ORA","GSEA"), 
+                                                                           choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                                                )
                                                         ),
-                                                        hr(),
-                                                        radioButtons("path_filter",
-                                                                     label = NULL,
-                                                                     choiceValue = c("DEG+", "DEG-", "both"),
-                                                                     choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
-                                                        )
+                                                      column(
+                                                              width = 6,
+                                                              radioButtons("path_filter",
+                                                                           label = NULL,
+                                                                           choiceValue = c("DEG+", "DEG-", "both"),
+                                                                           choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
+                                                              )
+                                                      )
                                                 )
+                                            )
+                                                 
                                         ),
-                                        column(
-                                                width = 6,
-                                                box2(
-                                                        title = "Database", 
-                                                        radioButtons("path_database",
-                                                                     label = NULL,
-                                                                     choiceValue = c("kegg", "reactome"),
-                                                                     choiceNames = c("KEGG", "Reactome")
-                                                        )
-                                                )
-                                        )
-                                ),
+
+                                                #box2(
+                                                 #       title = "Database", 
+                                                  #      radioButtons("path_database",
+                                                   #                  label = NULL,
+                                                    #                 choiceValue = c("kegg", "reactome"),
+                                                     #                choiceNames = c("KEGG", "Reactome")
+                                                      #  )
+                               # ),
                                 conditionalPanel(
                                         "input.path_analysis_method == 'ORA'",
                                         box2(
@@ -321,6 +324,8 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "GSEA plot",
+                                                                # Select box : pathway interest
+                                                                uiOutput("pathway"),
                                                                 plotOutput("path_gseaplot")%>% withSpinner(color="#0dc5c1")
                                                         )
                                                 ),
