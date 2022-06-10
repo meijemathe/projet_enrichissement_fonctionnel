@@ -175,19 +175,33 @@ ui = dashboardPage(
                                                         title = "Gene ontology settings", 
                                                         selectInput("go_ontology", 
                                                                     label = NULL, 
-                                                                    choices = c("Biological process", "Molecular function", "Cellular component")
-                                                        ),
-                                                        br(),
-                                                        radioButtons("go_level",
-                                                                     label = NULL,
-                                                                     choiceValue = c("all_level", "one_level"),
-                                                                     choiceNames = c("All-level GO terms", "One-level GO terms")
-                                                        ),
-                                                        conditionalPanel("input.go_level == 'one_level'", 
-                                                                         sliderInput("go_level_selected",
-                                                                                     label = NULL,
-                                                                                     min = 1, max = 10, value = 3
-                                                                         )
+                                                                    choices = c("Biological process" = "BP", "Molecular function" = "MF", "Cellular component" = "CC", "All" = "ALL")
+                                                        )
+                                                        # br(),
+                                                        # radioButtons("go_level",
+                                                        #              label = NULL,
+                                                        #              choiceValue = c("all_level", "one_level"),
+                                                        #              choiceNames = c("All-level GO terms", "One-level GO terms")
+                                                        # ),
+                                                        # conditionalPanel("input.go_level == 'one_level'", 
+                                                        #                  sliderInput("go_level_selected",
+                                                        #                              label = NULL,
+                                                        #                              min = 1, max = 10, value = 3
+                                                        #                  )
+                                                        # )
+                                                )
+                                        )
+                                ),
+                                fluidRow(
+                                        column(
+                                                width = 12,
+                                                box2(
+                                                        title = "Plot settings",
+                                                        sliderInput("go_pvalue",
+                                                                    min = 0, 
+                                                                    max = 1, 
+                                                                    value = 0.05, 
+                                                                    label = "Select a adjusted p-value cutoff"
                                                         )
                                                 )
                                         )
@@ -210,7 +224,21 @@ ui = dashboardPage(
                                                         )
                                                 )
                                                 
+                                        ),
+                                        fluidRow(
+                                                column(
+                                                        width = 12,
+                                                        DT::dataTableOutput(outputId = "table_go_ora")
+                                                )
+                                        ),
+                                        fluidRow(
+                                                box2(
+                                                        title = "Download",
+                                                                downloadButton("download_go_barplot","Barplot"),
+                                                                downloadButton("download_go_dotplot", "Dotplot")
+                                                )
                                         )
+                                                        
                                 ),
                                 conditionalPanel(
                                         "input.go_analysis_method == 'GSEA'",
@@ -229,35 +257,21 @@ ui = dashboardPage(
                                                                 plotOutput("GO_GSEA_plot")%>% withSpinner(color="#0dc5c1")
                                                         )
                                                 )
-                                        )
-                                ),
-                                fluidRow(
-                                        box2(
-                                                title = "Plot settings",
-                                                sliderInput("go_pvalue",
-                                                            min = 0, 
-                                                            max = 1, 
-                                                            value = 0.05, 
-                                                            label = "Select a adjusted p-value cutoff"
+                                        ),
+                                        fluidRow(
+                                                column(
+                                                        width = 12,
+                                                        DT::dataTableOutput(outputId = "table_go_gsea")
                                                 )
-                                        )
-                                ),
-                                fluidRow(
-                                        box2(
-                                                title = "Download",
-                                                conditionalPanel(
-                                                        "input.go_analysis_method == 'ORA'",
-                                                        downloadButton("download_go_barplot","Barplot"),
-                                                        downloadButton("download_go_dotplot", "Dotplot")
-                                                ),
-                                                conditionalPanel(
-                                                        "input.go_analysis_method == 'GSEA'",
+                                        ),
+                                        fluidRow(
+                                                box2(
+                                                        title = "Download",
                                                         downloadButton("download_go_gseaplot", "GSEA plot"),
                                                         downloadButton("download_go_goplot", "GO plot")
                                                 )
                                         )
-                                ),
-                                dataTableOutput("go_datatable")
+                                )
                         ),
                         
                         # Third tab content : Pathways Enrichment
