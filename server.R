@@ -282,10 +282,51 @@ function(input, output) {
                         req(data_go())
                         return(get_ego(data(), organism()))
                 })
+                output$table_go_ora <- DT::renderDataTable({
+                  req(ego())
+                  df <- as.data.frame(ego()) 
+                  df <-df[ , -which(names(df) %in% c("geneID"))]
+                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'">GO link</a>')
+                  df <- df %>% add_column(Links, .after ="ID")
+                  return(df)
+                  
+                },
+                extensions = 'Buttons',
+                rownames = FALSE,
+                escape = FALSE,
+                options = list(
+                  fixedColumns = TRUE,
+                  autoWidth = FALSE,
+                  ordering = TRUE,
+                  scrollX = TRUE,
+                  dom = 'Bfrtip',
+                  buttons = c('csv', 'excel')),
+                class = "display"
+                )
                 gsego <- reactive({
                         req(gene_list())
                         return(get_gsego(gene_list(), organism()))
                 })
+                output$table_go_gsea <- DT::renderDataTable({
+                  req(gsego())
+                  df <- as.data.frame(gsego()) 
+                  df <-df[ , -which(names(df) %in% c("core_enrichment"))]
+                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'">GO link</a>')
+                  df <- df %>% add_column(Links, .after ="ID")
+                  return(df)
+                },
+                extensions = 'Buttons',
+                rownames = FALSE,
+                escape = FALSE,
+                options = list(
+                  fixedColumns = TRUE,
+                  autoWidth = FALSE,
+                  ordering = TRUE,
+                  scrollX = TRUE,
+                  dom = 'Bfrtip',
+                  buttons = c('csv', 'excel')),
+                class = "display"
+                )
                 #barplot ORA
                 GO_ORA_barplot_input <- reactive({
                         req(ego())
