@@ -45,31 +45,31 @@ get_kegg_gene_list <- function(data, organism){
   return(l)
 }
 
-get_ego <- function(data, organism){
+get_ego <- function(data, organism, process, pvalue){
   # fonction enrichGO()
   # input :  vector of genes
   # output : enrichment in GO categories after FDR control.
   ego <- enrichGO(gene = data$ID,
                   OrgDb  = organism,
                   keyType = 'ENSEMBL',
-                  ont = "CC",
+                  ont = process,
                   pAdjustMethod = "BH",
-                  pvalueCutoff  = 0.01,
-                  qvalueCutoff  = 0.05)
+                  pvalueCutoff  = pvalue)
+                  # qvalueCutoff  = 0.05)
   return(ego)
 }
 
-get_gsego <- function(gene_list, organism){
+get_gsego <- function(gene_list, organism, process, pvalue){
   gsego <- gseGO(geneList=gene_list, 
-                  ont ="ALL", 
+                  ont =process, 
                   keyType = "ENSEMBL", 
                   nPerm = 10000, 
                   minGSSize = 3, 
                   maxGSSize = 800, 
-                  pvalueCutoff = 0.05, 
+                  pvalueCutoff = pvalue, 
                   verbose = TRUE, 
                   OrgDb = organism, 
-                  pAdjustMethod = "none")
+                  pAdjustMethod = "BH")
   return(gsego)
 }
 
