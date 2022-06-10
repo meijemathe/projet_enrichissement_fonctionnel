@@ -345,7 +345,14 @@ ui = dashboardPage(
                                                 downloadButton("download_path_goplot", "Path plot")
                                         )
                                 ),
-                                dataTableOutput("path_datatable")
+                                conditionalPanel(
+                                        "input.go_analysis_method == 'ORA'",
+                                        DT::dataTableOutput(outputId = "table_ekk")
+                                ),
+                                conditionalPanel(
+                                        "input.go_analysis_method == 'GSEA'",
+                                        DT::dataTableOutput(outputId = "table_gsekk")
+                                )
                         ),
                         tabItem("prot_enrichment",
                                 fluidRow(
