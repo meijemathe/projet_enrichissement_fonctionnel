@@ -15,7 +15,6 @@
 # Initialisation des packages 
 
 options(timeout = 2000)
-if (!require('R.utils', quietly = T)) install.packages('R.utils');
 if (!require('shiny', quietly = T)) install.packages('shiny');
 if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
 if (!require('shinybusy', quietly = T)) install.packages('shinybusy');
