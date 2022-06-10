@@ -132,25 +132,16 @@ ui = dashboardPage(
                                                 title = "OPTIONS",
                                                 sliderInput(
                                                         inputId = "pvalue", 
-                                                        label = "fitted p-value cutoff from input :",
+                                                        label = "adjusted p-value cutoff from input :",
                                                         min = 0, 
                                                         max = 1,
-                                                        value = 0.05),
+                                                        value = 1),
                                                 sliderInput(
                                                         inputId = "FC", 
                                                         label = "log2 Fold-Change cutoff from input :", 
                                                         min = 0, 
                                                         max = 5, 
-                                                        value = 1)
-                                        ),
-                                        box2(
-                                                title = "SET UP FOR SUBSEQUENT ANALYSES",
-                                                sliderInput(
-                                                        inputId = "FC", 
-                                                        label = "fitted p-value cutoff for subsequent analyses :", 
-                                                        min = 0, 
-                                                        max = 1, 
-                                                        value = 0.05)
+                                                        value = 0)
                                         ),
                                 ),
                                 # add_busy_spinner(spin = "fading-circle", position = 'full-page'),
@@ -266,41 +257,50 @@ ui = dashboardPage(
                                                 )
                                         )
                                 ),
-                                dataTableOutput("go_datatable")
+                                conditionalPanel(
+                                        "input.go_analysis_method == 'ORA'",
+                                        DT::dataTableOutput(outputId = "table_go_ora")
+                                ),
+                                conditionalPanel(
+                                        "input.go_analysis_method == 'GSEA'",
+                                        DT::dataTableOutput(outputId = "table_go_gsea")
+                                )
                         ),
                         
                         # Third tab content : Pathways Enrichment
                         tabItem(tabName = "path_enrichment",
                                 fluidRow(
-                                        column(
-                                                width = 6,
-                                                box2(
-                                                        title = "Analysis method", 
-                                                        radioButtons(inputId = "path_analysis_method", 
-                                                                     label = NULL, 
-                                                                     choiceValues = c("ORA","GSEA"), 
-                                                                     choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                        box2(
+                                                title = "Analysis method",
+                                                fluidRow(
+                                                        column(
+                                                                width = 6,
+                                                                radioButtons(inputId = "path_analysis_method", 
+                                                                             label = NULL, 
+                                                                             choiceValues = c("ORA","GSEA"), 
+                                                                             choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                                                )
                                                         ),
-                                                        hr(),
-                                                        radioButtons("path_filter",
-                                                                     label = NULL,
-                                                                     choiceValue = c("DEG+", "DEG-", "both"),
-                                                                     choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
-                                                        )
-                                                )
-                                        ),
-                                        column(
-                                                width = 6,
-                                                box2(
-                                                        title = "Database", 
-                                                        radioButtons("path_database",
-                                                                     label = NULL,
-                                                                     choiceValue = c("kegg", "reactome"),
-                                                                     choiceNames = c("KEGG", "Reactome")
+                                                        column(
+                                                                width = 6,
+                                                                radioButtons("path_filter",
+                                                                             label = NULL,
+                                                                             choiceValue = c("DEG+", "DEG-", "both"),
+                                                                             choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
+                                                                )
                                                         )
                                                 )
                                         )
                                 ),
+                                # box2(
+                                #         title = "Database", 
+                                #         radioButtons("path_database",
+                                #                      label = NULL,
+                                #                      choiceValue = c("kegg", "reactome"),
+                                #                      choiceNames = c("KEGG", "Reactome")
+                                #         ),
+                                # )
+                                
                                 conditionalPanel(
                                         "input.path_analysis_method == 'ORA'",
                                         box2(
@@ -316,6 +316,8 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "GSEA plot",
+                                                                # Select box : pathway interest
+                                                                uiOutput("pathway"),
                                                                 plotOutput("path_gseaplot")%>% withSpinner(color="#0dc5c1")
                                                         )
                                                 ),
@@ -354,7 +356,14 @@ ui = dashboardPage(
                                                 downloadButton("download_path_goplot", "Path plot")
                                         )
                                 ),
-                                dataTableOutput("path_datatable")
+                                conditionalPanel(
+                                        "input.go_analysis_method == 'ORA'",
+                                        DT::dataTableOutput(outputId = "table_ekk")
+                                ),
+                                conditionalPanel(
+                                        "input.go_analysis_method == 'GSEA'",
+                                        DT::dataTableOutput(outputId = "table_gsekk")
+                                )
                         ),
                         tabItem("prot_enrichment",
                                 fluidRow(
@@ -401,6 +410,9 @@ ui = dashboardPage(
                                         plotlyOutput("domain_dotplot")%>% withSpinner(color="#0dc5c1")
                                 ),
                                 dataTableOutput("domain_datatable")
+                        ),
+                        tabItem(tabName = "about",
+                                includeMarkdown('README.md')
                         )
                 )
         )
@@ -411,4 +423,4 @@ ui = dashboardPage(
         
         
         
-   
+        
