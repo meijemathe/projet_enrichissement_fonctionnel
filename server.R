@@ -359,7 +359,7 @@ function(input, output) {
                 #plot GSEA
                 GO_GSEA_plot_input <- reactive({
                         req(gsego())
-                        gseaplot(gsego(), by = "all", title = gsego()$Description[1], geneSetID = 1)
+                        gseaplot(gsekk(), by = "all", title = gsekk()$Description[as.numeric(input$select_path)], geneSetID = as.numeric(input$select_path))
                 })
                 output$GO_GSEA_plot <- renderPlot({
                         req(GO_GSEA_plot_input())
