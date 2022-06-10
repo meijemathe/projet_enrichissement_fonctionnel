@@ -15,6 +15,7 @@
 # Initialisation des packages 
 
 options(timeout = 2000)
+if (!require('tibble', quietly = T)) install.packages('tibble');
 if (!require('shiny', quietly = T)) install.packages('shiny');
 if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
 if (!require('shinybusy', quietly = T)) install.packages('shinybusy');
@@ -259,6 +260,7 @@ function(input, output) {
 ##                        Onglet GO Term Enrichment                                ##
 #####################################################################################
                 organism <- reactive({
+                        req(input$select_organism)
                         data_db_ordered[which(data_db_ordered$V1==input$select_organism),2]
                 })
                 data_go <- reactive({
@@ -276,7 +278,7 @@ function(input, output) {
                 })
                 gene_list <- reactive({
                         req(data_go())
-                        return(get_gene_list(data()))
+                        return(get_gene_list(data_go()))
                 })
                 ego <- reactive({
                         req(data_go(), organism(), input$go_ontology, input$go_pvalue)
@@ -341,6 +343,7 @@ function(input, output) {
                         goplot(ego(), showCategory = 10)
                 })
                 output$GO_ORA_goplot <- renderPlot({
+                        req(GO_ORA_barplot_input())
                         print(GO_ORA_goplot_input())
                 })
                 #dotplot GSEA
@@ -350,6 +353,7 @@ function(input, output) {
                                 facet_grid(.~.sign)
                 })
                 output$GO_GSEA_dotplot <- renderPlot({
+                        req(GO_GSEA_dotplot_input())
                         print(GO_GSEA_dotplot_input())
                 })
                 #plot GSEA
@@ -358,6 +362,7 @@ function(input, output) {
                         gseaplot(gsego(), by = "all", title = gsego()$Description[1], geneSetID = 1)
                 })
                 output$GO_GSEA_plot <- renderPlot({
+                        req(GO_GSEA_plot_input())
                         print(GO_GSEA_plot_input())
                 })
                 #boutons downloads
@@ -381,9 +386,22 @@ function(input, output) {
 #####################################################################################
 ##                        Onglet Pathway Enrichment                                ##
 #####################################################################################
+                data_path <- reactive({
+                  req(data())
+                  if(input$path_filter == 'DEG+'){
+                    return(data()[data()$log2FC > 0,])
+                  }
+                  else if(input$path_filter == 'DEG-'){
+                    return(data()[data()$log2FC < 0,])
+                  }
+                  else {
+                    return(data())
+                  }
+                  
+                })
                 kegg_gene_list <- reactive({
-                        req(data())
-                        return(get_kegg_gene_list(data(), organism()))
+                        req(data_path())
+                        return(get_kegg_gene_list(data_path(), organism()))
                 })
                 ekk <- reactive({
                         req(kegg_gene_list())
@@ -439,7 +457,16 @@ function(input, output) {
                         barplot(ekk(), showCategory = 10)
                 })
                 output$path_barplot <- renderPlot({
+                        req(path_barplot_input())
                         print(path_barplot_input())
+                })
+                output$pathway<- renderUI({
+                  req(gsekk())
+                  choices=setNames(seq(1,nrow(gsekk()),by=1),gsekk()$Description)
+                  selectInput("select_path", label = "Pathway of interest for GSEA Plot",
+                              choices=choices,
+                              selected = 1
+                  )
                 })
                 #plot GSEA
                 path_gseaplot_input <- reactive({
@@ -447,6 +474,7 @@ function(input, output) {
                         gseaplot(gsekk(), by = "all", title = gsekk()$Description[1], geneSetID = 1)
                 })
                 output$path_gseaplot <- renderPlot({
+                        req(path_gseaplot_input())
                         print(path_gseaplot_input())
                 })
                 #dotplot GSEA
@@ -456,6 +484,7 @@ function(input, output) {
                                 facet_grid(.~.sign)
                 })
                 output$path_dotplot <- renderPlot({
+                        req(path_dotplot_input())
                         print(path_dotplot_input())
                 })
                 #kegg_gene_list gsea
@@ -465,6 +494,7 @@ function(input, output) {
                         #print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
                 })
                 output$path_pathplot <- renderImage({
+                        req(path_pathplot_input())
                         print(path_pathplot_input())
                         list(src = paste(gsekk()[1]$ID, ".pathview.png", sep = ""),
                             alt = "This is alternate text")
