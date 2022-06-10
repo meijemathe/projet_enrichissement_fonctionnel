@@ -279,8 +279,8 @@ function(input, output) {
                         return(get_gene_list(data()))
                 })
                 ego <- reactive({
-                        req(data_go())
-                        return(get_ego(data(), organism()))
+                        req(data_go(), organism(), input$go_ontology, input$go_pvalue)
+                        return(get_ego(data_go(), organism(), input$go_ontology, input$go_pvalue))
                 })
                 output$table_go_ora <- DT::renderDataTable({
                   req(ego())
@@ -304,8 +304,8 @@ function(input, output) {
                 class = "display"
                 )
                 gsego <- reactive({
-                        req(gene_list())
-                        return(get_gsego(gene_list(), organism()))
+                        req(gene_list(), organism(), input$go_ontology, input$go_pvalue)
+                        return(get_gsego(gene_list(), organism(), input$go_ontology, input$go_pvalue))
                 })
                 output$table_go_gsea <- DT::renderDataTable({
                   req(gsego())
