@@ -1,0 +1,346 @@
+# Projet d'annotation fonctionnel avec R Shiny 
+
+# Auteurs :
+
+# MATHE Meije : meije.mathe@univ-rouen.fr
+# PETY Solene : solene.pety@etu.univ-rouen.fr
+# LETERRIER Bryce : bryce.leterrier@univ-rouen.fr
+# OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
+
+# M2.1 BIMS - Univ. Rouen Normandie 
+
+# 2021 - 2022
+
+#####################################################################
+# Initialisation des packages 
+
+options(timeout = 2000)
+if (!require('shiny', quietly = T)) install.packages('shiny');
+if (!require('shinydashboard', quietly = T)) install.packages('shinydashboard');
+if (!require('shinybusy', quietly = T)) install.packages('shinybusy');
+if (!require('shinycssloaders', quietly = T)) install.packages('shinycssloaders');
+if (!require('shinyjs', quietly = T)) install.packages('shinyjs');
+if (!require('shinyalert', quietly = T)) install.packages('shinyalert');
+if (!require('BiocManager', quietly = T)) install.packages('BiocManager');
+if (!require('Biostrings', quietly = T)) BiocManager::install('Biostrings');
+if (!require('biomaRt', quietly = T)) BiocManager::install('biomaRt');
+if (!require('biomartr', quietly = T)) install.packages('biomartr');
+if (!require('stringr', quietly = T)) install.packages('stringr');
+if (!require('stringi', quietly = T)) install.packages('stringi');
+if (!require('DT', quietly = T)) install.packages('DT');
+if (!require('plotly', quietly = T)) install.packages('plotly');
+if (!require('htmlwidgets', quietly = T)) install.packages('htmlwidgets');
+if (!require('clusterProfiler', quietly = T)) BiocManager::install('clusterProfiler');
+if (!require('pathview', quietly = T)) BiocManager::install('pathview');
+if (!require('ReactomePA', quietly = T)) BiocManager::install('ReactomePA');
+if (!require('AnnotationHub', quietly = T)) BiocManager::install('AnnotationHub');
+if (!require('enrichplot', quietly = T)) BiocManager::install("enrichplot");
+if (!require('topGO', quietly = T)) BiocManager::install("topGO");
+if (!require('ggplot2', quietly = T)) install.packages("ggplot2");
+if (!require('DOSE', quietly = T)) BiocManager::install("DOSE");
+
+library(shiny)
+library(shinydashboard)
+library(shinybusy)
+library(shinycssloaders)
+library(shinyjs)
+library(shinyalert)
+library(biomaRt)
+library(Biostrings)
+library(biomartr)
+library(stringr)
+library(stringi)
+library(DT)
+library(plotly)
+library(htmlwidgets)
+library(clusterProfiler)
+library(pathview)
+library(ReactomePA)
+library(AnnotationHub)
+library(enrichplot)
+library(topGO)
+library(ggplot2)
+library(DOSE)
+
+#####################################################################
+#to run for each R session for connexion to ensembl with biomart
+#allow R to try other ensembl mirrors site if connexion doesn't work
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+
+####################################################### COMMANDES A UTILISER #######
+# validate(need(dim(frame)[1]>0, "No ID found :\n Are you sure you have selected the right organism ?"))
+############################################################## Preparation de la liste des organismes disponibles ###########
+
+ah<-AnnotationHub()
+liste_all <- query(ah, c("OrgDb", "maintainer@bioconductor.org"))
+data_annot=as.data.frame(cbind(liste_all$species,liste_all$title))
+data_db=data_annot[grep(".*db.*", data_annot$V2),]
+data_db_ordered=data_db[order(data_db$V2),]
+data_db_ordered$V2<-gsub(".sqlite","",data_db_ordered$V2)
+choices=setNames(data_db_ordered$V1,data_db_ordered$V1)
+rm(data_db,ah,data_annot,liste_all)
+
+############################################################################################################################
+
+# Debut
+function(input, output) {
+        output$choices<- renderUI({
+                 selectInput("select_organism", label = "Organism of interest",
+                           choices=choices,
+                           selected = 1
+                 )
+         })
+        shinyjs::disable("start")
+        observeEvent(input$file, {
+                req(input$file)
+                #test extension
+                ext <- tools::file_ext(input$file$datapath)
+                validate(need(ext == "csv", "Please upload a csv file"))
+                # Vector with good columns names
+                good <-c("GeneName", "ID", "baseMean", "log2FC", "pval", "padj")
+                # Get data from the uploaded file
+                df <- read.csv(input$file$datapath, sep = ";")
+                #Check data format, colnames and GeneID
+                if(ncol(df)!=6)
+                {
+                        shinyalert("Column Error","Uploaded Data has the wrong number of columns\n Need 6 columns : GeneName, ID, baseMean, log2FC, pval, padj",
+                        type="error")
+                        returnValue()
+                }
+                else if(identical(tolower(good),tolower(colnames(df)))==FALSE)
+                {
+                        shinyalert("Column names Error",paste0("Wrong format for column ",which(colnames(df) != good),", it must be : ",good[which(colnames(df) != good)],"\n",collapse=""),type = "error")
+                        returnValue()
+                }
+                else {
+                        enable("start")
+                }
+        })
+        # When the analysis is started
+        observeEvent(input$start, {
+                req(input$file)
+                # Get data from the uploaded file
+                data <- reactive({
+                        req(input$file)
+                        df <- read.csv(input$file$datapath, sep = ";")
+                        df["log2padj"] <- -log2(df["padj"])
+                        if(startsWith(df$ID[1], "ENS")){
+                                df
+                        }
+                        else{
+                                shinyalert("Wrong ID format !","Need Ensembl ID", type="error")
+                                return(NULL)
+                        }
+                })
+
+                # Create the action when the curser hovers on the plot
+                addHoverBehavior <- "function(el, x){
+                        el.on('plotly_hover', function(data){
+                                var infotext = data.points.map(function(d){
+                                        console.log(d)
+                                        return (d.data.name[d.pointNumber]+': x= '+d.x+', y= '+d.y.toPrecision(3));
+                                });
+                                console.log(infotext)
+                                Shiny.onInputChange('hover_data', infotext)
+                        })
+                }"
+                renderPlotly2 <- function (expr, env = parent.frame(), quoted = FALSE){
+                        if (!quoted) {
+                                expr <- substitute(expr)
+                        }
+                        shinyRenderWidget(expr, plotlyOutput, env, quoted = TRUE)
+                }
+                # Generate the volcano plot
+                volcanoPlot <- reactive({
+                        req(data())
+                        View(data())
+                        df <- data()
+                        df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
+                                        ifelse(df["log2FC"] <= -input$FC & df["padj"] <= input$pvalue,"DOWN",
+                                        "NO")
+                                )
+                        mycolors <- c("blue", "orange", "grey")
+                        names(mycolors) <- c("DOWN", "UP", "NO")
+                        plot_ly(data = df, x = df$log2FC, y = df$log2padj, text = df$GeneName, mode = "markers", type = "scatter", color = df$DEG, colors = mycolors) %>%
+                          layout(xaxis = list(title = 'log2(FC)'),
+                                 yaxis = list(title = 'log2(padj)'),
+                                 title = list(text = paste("Volcano Plot ", input$select_organism), x = 0))
+                        
+                })
+                output$volcano <- renderPlotly2({
+                        req(volcanoPlot())
+                        p <- volcanoPlot()
+                        as_widget(p) %>% 
+                          onRender(addHoverBehavior) %>%
+                          config(modeBarButtons = list(list("zoomIn2d"), list("zoomOut2d"), list("select2d"), list("resetScale2d"), list("toImage")))
+                        
+                })
+                # Print genes name when the curser hovers on the points
+                output$hover <- renderText({
+                        input$hover_data
+                })
+          
+                # Coord selected box in graph
+                coord <- reactive({
+                  req(volcanoPlot())
+
+                  event_register(volcanoPlot(), 'plotly_brushed')
+                  event_data(event = 'plotly_brushed')
+                })
+
+                # Data view
+                output$table <- DT::renderDataTable({
+                  req(data())
+                  df <- data()
+
+                  if(is.null(coord()))
+                  {
+                    return(df)
+                  }
+                  else
+                  {
+                    x <- coord()$x
+                    y <- coord()$y
+
+                    return(df[ which(df$log2FC >= x[1] & df$log2FC <= x[2] &
+                        df$log2padj >= y[1] & df$log2padj <= y[2]), ])
+                  }
+                },
+                extensions = 'Buttons',
+                options = list(
+                        fixedColumns = TRUE,
+                        autoWidth = FALSE,
+                        ordering = TRUE,
+                        scrollX = TRUE,
+                        dom = 'Bfrtip',
+                        buttons = c('csv', 'excel')),
+                class = "display"
+                )
+                MAPlot <- reactive({
+                        req(data())
+                        df <- data()
+                        df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
+                                            ifelse(df["log2FC"] <= -input$FC & df["padj"] <= input$pvalue,"DOWN",
+                                                   "NO")
+                        )
+                        mycolors <- c("blue", "orange", "grey")
+                        names(mycolors) <- c("DOWN", "UP", "NO")
+                        plot_ly(data = df, x = log2(df$baseMean), y = df$log2FC, text = df$GeneName, mode = "markers", type = "scatter", color = df$DEG, colors = mycolors) %>%
+                                layout(xaxis = list(title = "log2(baseMean)"),
+                                       yaxis = list(title = "log2(FC)"),
+                                       title = list(text = paste("MA Plot ", input$select_organism), x = 0))
+                        
+                })
+                output$MA <- renderPlotly2({
+                        req(MAPlot)
+                        p <- MAPlot()
+                        as_widget(p) %>% 
+                          onRender(addHoverBehavior) %>%
+                          config(modeBarButtons = list(list("zoomIn2d"), list("zoomOut2d"), list("select2d"), list("resetScale2d"), list("toImage")))
+
+                })
+#####################################################################################
+##                        Onglet GO Term Enrichment                                ##
+#####################################################################################
+                organism <- reactive({
+                        data_db_ordered[which(data_db_ordered$V1==input$select_organism),2]
+                })
+                if (!require(organism(), quietly = T)) BiocManager::install(organism())
+                gene_list <- reactive({
+                        req(data())
+                        return(get_gene_list(data()))
+                })
+                ego <- reactive({
+                        req(data())
+                        return(get_ego(data(), organism()))
+                })
+                gsego <- reactive({
+                        req(gene_list())
+                        return(get_gsego(gene_list(), organism()))
+                })
+                output$GO_ORA_barplot <- renderPlot({
+                        req(ego())
+                        barplot(ego(), showCategory = 10)
+                })
+                output$GO_ORA_goplot <- renderPlot({
+                        req(ego())
+                        goplot(ego(), showCategory = 10)
+                })
+                output$GO_GSEA_dotplot <- renderPlot({
+                        req(gsego())
+                        dotplot(gsego(), showCategory=10, split=".sign", font.size = 7) + 
+                                facet_grid(.~.sign)
+                })
+                output$GO_GSEA_plot <- renderPlot({
+                        req(gsego())
+                        gseaplot(gsego(), by = "all", title = gsego()$Description[1], geneSetID = 1)
+                })
+#####################################################################################
+##                        Onglet Pathway Enrichment                                ##
+#####################################################################################
+                kegg_gene_list <- reactive({
+                        req(data())
+                        return(get_kegg_gene_list(data(), organism()))
+                })
+                ekk <- reactive({
+                        req(kegg_gene_list())
+                        return(get_ekk(kegg_gene_list()[[1]]))
+                })
+                gsekk <- reactive({
+                        req(kegg_gene_list())
+                        return(get_gsekk(kegg_gene_list()[[2]]))
+                })
+                output$path_barplot <- renderPlot({
+                        req(ekk())
+                        barplot(ekk(), showCategory = 10)
+                })
+                output$path_gseaplot <- renderPlot({
+                        req(gsekk())
+                        gseaplot(gsekk(), by = "all", title = gsekk()$Description[1], geneSetID = 1)
+                })
+                output$path_dotplot <- renderPlot({
+                        req(gsekk())
+                        dotplot(gsekk(), showCategory = 10, title = "Enriched Pathways" , split=".sign") + 
+                                facet_grid(.~.sign)
+                })
+                output$path_pathplot <- renderImage({
+                        req(gsekk())
+                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = organism())
+                        print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
+                        list(src = paste(gsekk()[1]$ID, ".pathview.png", sep = ""),
+                             alt = "This is alternate text")
+                        #knitr::include_graphics(paste(gsekk()[2]$ID, ".pathview.png", sep = ""))
+                }, deleteFile = TRUE)
+#####################################################################################
+##                        Onglet Pathway Enrichment                                ##
+#####################################################################################
+                domains_gene_list <- reactive({
+                        req(data())
+                        return(get_domains_gene_list(data(), organism()))
+                })
+                domains_interest_list <- reactive({
+                        req(domains_gene_list())
+                        return(get_domains_interest(domains_gene_list(), organism()))
+                        print("test 1")
+                })
+                genes_reference_list <- reactive({
+                        return(get_genes_refrence(get(organism())))
+                })
+                domains_reference_list <- reactive({
+                        return(get_domains_reference(get(organism())))
+                })
+                domains_ORA_results <- reactive({
+                        req(domains_reference_list(), domains_gene_list(), genes_reference_list())
+                        return(get_domains_ORA_datatable(domains_reference_list(), domains_gene_list(), genes_reference_list()))
+                })
+                domains_barplot <- reactive({
+                        req(domains_ORA_results())
+                        return(domains_barplot())
+                })
+                output$domain_barplot <- renderPlot({
+                        req(domains_ORA_results())
+                        domains_barplot(domains_ORA_results())
+                })      
+        })
+}
+                
