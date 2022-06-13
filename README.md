@@ -9,7 +9,6 @@ Organsation des fichiers & lancement de l'application :
 [Description de l'espace GitHub](#3)  
 [Installation et lancement de l'application](#4)  
 [Format des données](#5)  
-[Output attendus](#6)  
 [Erreurs communes](#7)  
 Bibliographie :   
 [Données](#8)  
@@ -60,14 +59,6 @@ Exemple de format requis :
 ![format_data2](img/format_data_2.PNG)
 
 De plus, l'application ne fonctionne qu'avec des ensemblID. Il n'est pas possible d'utiliser de NCBIID pour le moment.
-
-### Présentation des onglets et bonnes pratiques d’utilisations (warnings, erreurs …) #TODO <a name="5"></a>
-
-- Vidéo ? (juste image qui montre le bon fonctionnement de l'appli) => à la fin
-
-### Output attendus #TODO <a name="6"></a>
-données d'exemples dispo : 
-screens de plot ? 
 
 ### Erreurs communes #TODO <a name="7"></a>
 
