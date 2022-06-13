@@ -1,6 +1,7 @@
 TODO : tri du main (clusterpro etc)
 # Enrichissement Fonctionnel avec R
-# TODO : table des matières 
+
+## Table des matières 
 Présentation du projet :   
 [Contexte et objectif(s)](#1)  
 [L'équipe EnF'R](#2)  
@@ -16,14 +17,14 @@ Bibliographie :
 
 
 
-# Présentation du projet 
-## Contexte et objectif(s) <a name="1"></a>
+## Présentation du projet 
+### Contexte et objectif(s) <a name="1"></a>
 
 Ce projet correspond à l'évaluation de l'UE UE5 Bioinformatique en Sciences Omiques 3 – Analyse de données de séquençage NGS et annotation du master BIMS de l'Université de Rouen Normandie. 
 
 Le but de ce projet est de coder une application web en R Shiny pour en faire un outil d'enrichissement fonctionnel en transcriptomique. Cet outil prend en entrée une matrice de comptage issue d’une expérience de séquencage ARNm (DEG) et retourne les résultats d'enrichissement fonctionnel avec des représentations graphiques associées.
 
-## L'équipe EnF'R <a name="2"></a>
+### L'équipe EnF'R <a name="2"></a>
 
 
 L'équipe se nomme **EnF'R** qui signifie **En**richissement **F**onctionnel avec **R**. Elle est consituée de 4 membres, tous étudiants dans le master BIMS l'Université de Rouen Normandie. 
@@ -33,15 +34,15 @@ PETY Solene : solene.pety@etu.univ-rouen.fr
 LETERRIER Bryce : bryce.leterrier@univ-rouen.fr  
 OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr  
 
-# Détails sur les fichiers / dossiers 
+## Détails sur les fichiers / dossiers 
 
-## Description de l'espace GitHub <a name="3"></a>
+### Description de l'espace GitHub <a name="3"></a>
 
 ![Organigramme](img/organigramme.png)
 
 Voici comment s'organise l'espace de dépôt GitHub. Les scripts à executer (ui.R et server.R) sont dans le dossier principal. Des fichiers d'exemple sont disponibles dans le dossier data. Le dossier R contient 2 scripts R :  stats.R qui correspond aux fonctions qui étaient demandées d'être codées à la main et cluster_profiler.R qui regroupe des fonctions utilisant cluster profiler permettant de garder le script principal propre. Pour finir, les dossiers img et www contient des images utilisées dans ce readme et/ou dans le script (logo, gif de loader, ...)
 
-## Installation et lancement de l'application #TODO <a name="4"></a>
+### Installation et lancement de l'application #TODO <a name="4"></a>
 
 ![Tuto_start](img/tuto_start.png)
 
@@ -53,7 +54,7 @@ Afin d'utiliser l'application simplement, il faut tout d'abord télécharger l'a
 
 Voir parties suivantes pour l'utilisation en détail et eventuelles erreurs.
   
-## Format des données <a name="5"></a>
+### Format des données <a name="5"></a>
 
 Les données d'entrée doivent suivre un format bien précis, tout manque résultat en une erreur qui empechera le lancera de l'application. Les données doivent être au format .csv avec des noms de colonnes similaire à l'image suivante ainsi que dans le même ordre. 
 
@@ -63,18 +64,18 @@ Exemple de format requis :
 
 De plus, l'application ne fonctionne qu'avec des ensemblID. Il n'est pas possible d'utiliser de NCBIID pour le moment.
 
-## Présentation des onglets et bonnes pratiques d’utilisations (warnings, erreurs …) #TODO <a name="5"></a>
+### Présentation des onglets et bonnes pratiques d’utilisations (warnings, erreurs …) #TODO <a name="5"></a>
 
 - Vidéo ? (juste image qui montre le bon fonctionnement de l'appli) => à la fin
 
-## Output attendus #TODO <a name="6"></a>
+### Output attendus #TODO <a name="6"></a>
 données d'exemples dispo : 
 screens de plot ? 
 
 
 
 
-## Erreurs communes #TODO <a name="7"></a>
+### Erreurs communes #TODO <a name="7"></a>
 
 - Vérifier bonne version de R : commande #TODO
 - Sous Linux : certains packages ont besoin de ces librairies > à installer si cela ne fonctionne pas + commande #TODO
@@ -83,12 +84,12 @@ screens de plot ?
 libcurl4-openssl-dev  
 libssl-dev
 
-# Bibliographie #TODO
-## Données #TODO <a name="8"></a>
+## Bibliographie #TODO
+### Données #TODO <a name="8"></a>
 
 - Citation article contenant le jdd #TODO
 
-## Packages & logiciels <a name="9"></a>
+### Packages & logiciels <a name="9"></a>
 
 **R** : R version 4.1.2 (2021-11-01) -- "Bird Hippie"
 
