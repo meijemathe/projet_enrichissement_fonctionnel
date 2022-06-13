@@ -136,12 +136,10 @@ function(input, output) {
         observeEvent(input$start, {
                 req(input$file)
                 # Get data from the uploaded file
-                data <- reactive({
+                data_prev <- reactive({
                         req(input$file)
                         df <- read.csv(input$file$datapath, sep = ";")
                         df["log2padj"] <- -log2(df["padj"])
-                        
-                        df <- df[df$padj < input$pvalue,]
                         
                         if(startsWith(df$ID[1], "ENS")){
                                 df
@@ -152,6 +150,13 @@ function(input, output) {
                         }
                 })
 
+                data <- reactive({
+                        req(data_prev())
+                        df <- data_prev()
+                        df <- df[df$padj < input$pvalue & (df$log2FC < -input$FC | df$log2FC > input$FC),]
+                        df
+                })
+                
                 # Create the action when the curser hovers on the plot
                 addHoverBehavior <- "function(el, x){
                         el.on('plotly_hover', function(data){
