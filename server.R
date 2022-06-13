@@ -363,9 +363,19 @@ function(input, output) {
                         print(GO_GSEA_dotplot_input())
                 })
                 #plot GSEA
+                output$GO<- renderUI({
+                        req(gsego())
+                        table = as.data.frame(gsego())
+                        View(table)
+                        choices=setNames(1:nrow(table),table$Description)
+                        selectInput("select_GO", label = "GO term of interest for GSEA Plot",
+                                    choices=choices,
+                                    selected = 1
+                        )
+                })
                 GO_GSEA_plot_input <- reactive({
                         req(gsego())
-                        gseaplot(gsego(), by = "all", title = gsekk()$Description[1], geneSetID = 1)
+                        gseaplot(gsego(), by = "all", title = gsego()$Description[as.numeric(input$select_GO)], geneSetID = as.numeric(input$select_GO))
                 })
                 output$GO_GSEA_plot <- renderPlot({
                         req(GO_GSEA_plot_input())
