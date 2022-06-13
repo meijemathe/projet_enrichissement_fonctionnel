@@ -175,19 +175,33 @@ ui = dashboardPage(
                                                         title = "Gene ontology settings", 
                                                         selectInput("go_ontology", 
                                                                     label = NULL, 
-                                                                    choices = c("Biological process", "Molecular function", "Cellular component")
-                                                        ),
-                                                        br(),
-                                                        radioButtons("go_level",
-                                                                     label = NULL,
-                                                                     choiceValue = c("all_level", "one_level"),
-                                                                     choiceNames = c("All-level GO terms", "One-level GO terms")
-                                                        ),
-                                                        conditionalPanel("input.go_level == 'one_level'", 
-                                                                         sliderInput("go_level_selected",
-                                                                                     label = NULL,
-                                                                                     min = 1, max = 10, value = 3
-                                                                         )
+                                                                    choices = c("Biological process" = "BP", "Molecular function" = "MF", "Cellular component" = "CC", "All" = "ALL")
+                                                        )
+                                                        # br(),
+                                                        # radioButtons("go_level",
+                                                        #              label = NULL,
+                                                        #              choiceValue = c("all_level", "one_level"),
+                                                        #              choiceNames = c("All-level GO terms", "One-level GO terms")
+                                                        # ),
+                                                        # conditionalPanel("input.go_level == 'one_level'", 
+                                                        #                  sliderInput("go_level_selected",
+                                                        #                              label = NULL,
+                                                        #                              min = 1, max = 10, value = 3
+                                                        #                  )
+                                                        # )
+                                                )
+                                        )
+                                ),
+                                fluidRow(
+                                        column(
+                                                width = 12,
+                                                box2(
+                                                        title = "Plot settings",
+                                                        sliderInput("go_pvalue",
+                                                                    min = 0, 
+                                                                    max = 1, 
+                                                                    value = 0.05, 
+                                                                    label = "Select a adjusted p-value cutoff"
                                                         )
                                                 )
                                         )
@@ -210,7 +224,21 @@ ui = dashboardPage(
                                                         )
                                                 )
                                                 
+                                        ),
+                                        fluidRow(
+                                                column(
+                                                        width = 12,
+                                                        DT::dataTableOutput(outputId = "table_go_ora")
+                                                )
+                                        ),
+                                        fluidRow(
+                                                box2(
+                                                        title = "Download",
+                                                                downloadButton("download_go_barplot","Barplot"),
+                                                                downloadButton("download_go_dotplot", "Dotplot")
+                                                )
                                         )
+                                                        
                                 ),
                                 conditionalPanel(
                                         "input.go_analysis_method == 'GSEA'",
@@ -226,81 +254,63 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "GSEA plot",
+                                                                # Select box : pathway interest
+                                                                uiOutput("GO"),
                                                                 plotOutput("GO_GSEA_plot")%>% withSpinner(color="#0dc5c1")
                                                         )
                                                 )
-                                        )
-                                ),
-                                fluidRow(
-                                        box2(
-                                                title = "Plot settings",
-                                                sliderInput("go_pvalue",
-                                                            min = 0, 
-                                                            max = 1, 
-                                                            value = 0.05, 
-                                                            label = "Select a adjusted p-value cutoff"
+                                        ),
+                                        fluidRow(
+                                                column(
+                                                        width = 12,
+                                                        DT::dataTableOutput(outputId = "table_go_gsea")
                                                 )
-                                        )
-                                ),
-                                fluidRow(
-                                        box2(
-                                                title = "Download",
-                                                conditionalPanel(
-                                                        "input.go_analysis_method == 'ORA'",
-                                                        downloadButton("download_go_barplot","Barplot"),
-                                                        downloadButton("download_go_dotplot", "Dotplot")
-                                                ),
-                                                conditionalPanel(
-                                                        "input.go_analysis_method == 'GSEA'",
+                                        ),
+                                        fluidRow(
+                                                box2(
+                                                        title = "Download",
                                                         downloadButton("download_go_gseaplot", "GSEA plot"),
                                                         downloadButton("download_go_goplot", "GO plot")
                                                 )
                                         )
-                                ),
-                                conditionalPanel(
-                                        "input.go_analysis_method == 'ORA'",
-                                        DT::dataTableOutput(outputId = "table_go_ora")
-                                ),
-                                conditionalPanel(
-                                        "input.go_analysis_method == 'GSEA'",
-                                        DT::dataTableOutput(outputId = "table_go_gsea")
                                 )
                         ),
                         
                         # Third tab content : Pathways Enrichment
                         tabItem(tabName = "path_enrichment",
                                 fluidRow(
-                                        box2(
-                                                title = "Analysis method",
-                                                fluidRow(
-                                                        column(
-                                                                width = 6,
-                                                                radioButtons(inputId = "path_analysis_method", 
-                                                                             label = NULL, 
-                                                                             choiceValues = c("ORA","GSEA"), 
-                                                                             choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                         box2(
+                                              title = "Analysis method", 
+                                              fluidRow(
+                                                      column(
+                                                              width = 6,
+                                                              radioButtons(inputId = "path_analysis_method", 
+                                                                           label = NULL, 
+                                                                           choiceValues = c("ORA","GSEA"), 
+                                                                           choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
                                                                 )
                                                         ),
-                                                        column(
-                                                                width = 6,
-                                                                radioButtons("path_filter",
-                                                                             label = NULL,
-                                                                             choiceValue = c("DEG+", "DEG-", "both"),
-                                                                             choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
-                                                                )
-                                                        )
+                                                      column(
+                                                              width = 6,
+                                                              radioButtons("path_filter",
+                                                                           label = NULL,
+                                                                           choiceValue = c("DEG+", "DEG-", "both"),
+                                                                           choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
+                                                              )
+                                                      )
                                                 )
-                                        )
-                                ),
-                                # box2(
-                                #         title = "Database", 
-                                #         radioButtons("path_database",
-                                #                      label = NULL,
-                                #                      choiceValue = c("kegg", "reactome"),
-                                #                      choiceNames = c("KEGG", "Reactome")
-                                #         ),
-                                # )
-                                
+                                            )
+                                                 
+                                        ),
+
+                                                #box2(
+                                                 #       title = "Database", 
+                                                  #      radioButtons("path_database",
+                                                   #                  label = NULL,
+                                                    #                 choiceValue = c("kegg", "reactome"),
+                                                     #                choiceNames = c("KEGG", "Reactome")
+                                                      #  )
+                               # ),
                                 conditionalPanel(
                                         "input.path_analysis_method == 'ORA'",
                                         box2(
@@ -331,7 +341,9 @@ ui = dashboardPage(
                                         ),
                                         box2(
                                                 title = "Pathway plot",
-                                                plotOutput("path_pathplot")%>% withSpinner(color="#0dc5c1")
+                                                uiOutput("pathplot_list"),
+                                                plotOutput("path_pathplot")%>% withSpinner(color="#0dc5c1"),
+                                                uiOutput("imageUI")
                                         )
                                 ),
                                 box2(
