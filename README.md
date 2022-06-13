@@ -44,8 +44,8 @@ Voir parties suivantes pour l'utilisation en détail et eventuelles erreurs.
 Les données d'entrée doivent suivre un format bien précis, tout manque résultat en une erreur qui empechera le lancera de l'application. Les données doivent être au format .csv avec des noms de colonnes similaire à l'image suivante ainsi que dans le même ordre. 
 
 Exemple de format requis : 
-![format_data1](img/format_data_1.png)
-![format_data2](img/format_data_2.png)
+![format_data1](img/format_data_1.PNG)
+![format_data2](img/format_data_2.PNG)
 
 De plus, l'application ne fonctionne qu'avec des ensemblID. Il n'est pas possible d'utiliser de NCBIID pour le moment.
 
