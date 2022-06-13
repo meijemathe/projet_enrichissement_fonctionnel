@@ -8,18 +8,7 @@ TODO : tri du main (clusterpro etc)
 
 Ce projet correspond à l'évaluation de l'UE UE5 Bioinformatique en Sciences Omiques 3 – Analyse de données de séquençage NGS et annotation du master BIMS de l'Université de Rouen Normandie. 
 
-Le but de ce projet est de coder une application R Shiny pour en faire un outil d'enrichissement fonctionnel. Cet outil .... # TODO
-- projet enrichissement fonctionnel, app shiny, les diverses analyses (renvoit partie présentation)
-"""
-Développement d’une chaîne de traitement et d’une application web en R pour
-l’Analyse d’Enrichissement fonctionnel en transcriptomique
-
-Le pipeline que vous développerez devra à partir d’une matrice de comptage issue d’une expérience
-de séquençage d’ARNm (DEG) en entrée fournir au biologiste en sortie les résultats d’enrichissement
-fonctionnel et représentations graphiques associées. Vous créerez une interface web sous la forme
-d’une application Shiny afin de permettre l’utilisation aisée par un non programmeur.
-
-"""
+Le but de ce projet est de coder une application web en R Shiny pour en faire un outil d'enrichissement fonctionnel en transcriptomique. Cet outil prend en entrée une matrice de comptage issue d’une expérience de séquencage ARNm (DEG) et retourne les résultats d'enrichissement fonctionnel avec des représentations graphiques associées.
 
 ### L'équipe EnF'R
 
@@ -36,16 +25,20 @@ OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
 
 ![Organigramme](img/organigramme.png)
 
-Voici comment s'organise l'espace de dépôt GitHub. Dans un premier temps ... 
+Voici comment s'organise l'espace de dépôt GitHub. Les scripts à executer (ui.R et server.R) sont dans le dossier principal. Des fichiers d'exemple sont disponibles dans le dossier data. Le dossier R contient un script R (stats.R) qui correspondaux fonctions qui étaient demandées d'être codées à la main et un script R (cluster_profiler) qui regroupe des fonctions utilisant cluster profiler permettant de garder le script principal propre. Pour finir, les dossiers img et www contient des images utilisées dans ce readme et/ou dans le script (logo, gif de loader, ...)
+
+##TODO :  noveau fichier stats .R (trucs recodés à la main) => ajout ici + sur organigramme //
+##TODO : dossier R : sert à quoi ? 
 
 ## Installation et lancement de l'application #TODO
 
 ![Tuto_start](img/tuto_start.png)
 
-TODO ! Rapidement + faire à la fin 
+NOTE 1 : il est recommandé d'installer les packages une première fois avant de lancer l'application. En effet, il y a beaucoup de packages utilisés donc cette partie prendra un certain temps. 
 
-- Télécharger le dosser (screen tuto)
-- Recommander d'installer tous les packages à la main avant le début 
+NOTE 2 : l'application tourne pour des version antérieurs (ou égale) à la version 4.1.2 du au package plotly qui n'est pas encore à jour avec cette version. 
+
+Afin d'utiliser l'application simplement, il faut tout d'abord télécharger l'archive contenant tous les fichiers source. Ensuite il faut lancer les fichiers ui.R et server.R et cliquer sur Run App. L'application Shiny se lancera et il sera possible d'upload les données à analyser (voir partie suivante pour l'utilisation en détail). 
   
 ## Format des données  #TODO 
 
@@ -85,12 +78,10 @@ libssl-dev
 **R** : R version 4.1.2 (2021-11-01) -- "Bird Hippie"
 
 **RStudio** :
-
   2021.09.1 Build 372
   © 2009-2021 RStudio, PBC
   "Ghost Orchid" Release (8b9ced18, 2021-11-08) for Ubuntu Bionic
   Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.12.8 Chrome/69.0.3497.128 Safari/537.36
-
 
 Packages :  
 **shiny** :   
