@@ -1,5 +1,3 @@
-########### EN COURS DE REDACTION ################################
-# TODO : LOGO à faire pour dark mode > > gris comme les box (lignes et noms de fichiers)
 # TODO : table des matières https://documentation-snds.health-data-hub.fr/contribuer/guide_contribution/tutoriel_markdown.html#liens-hypertextes
 
 # Enrichissement Fonctionnel avec R
