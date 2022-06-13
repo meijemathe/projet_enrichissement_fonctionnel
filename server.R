@@ -40,6 +40,7 @@ if (!require('topGO', quietly = T)) BiocManager::install("topGO");
 if (!require('ggplot2', quietly = T)) install.packages("ggplot2");
 if (!require('DOSE', quietly = T)) BiocManager::install("DOSE");
 
+library(tibble)
 library(shiny)
 library(shinydashboard)
 library(shinybusy)
