@@ -1,5 +1,6 @@
 TODO : tri du main (clusterpro etc)
-# TODO : table des matières https://documentation-snds.health-data-hub.fr/contribuer/guide_contribution/tutoriel_markdown.html#liens-hypertextes
+# TODO : table des matières 
+Caca : [partie 1 text](#abcd)
 
 # Enrichissement Fonctionnel avec R
 
@@ -11,6 +12,7 @@ Ce projet correspond à l'évaluation de l'UE UE5 Bioinformatique en Sciences Om
 Le but de ce projet est de coder une application web en R Shiny pour en faire un outil d'enrichissement fonctionnel en transcriptomique. Cet outil prend en entrée une matrice de comptage issue d’une expérience de séquencage ARNm (DEG) et retourne les résultats d'enrichissement fonctionnel avec des représentations graphiques associées.
 
 ### L'équipe EnF'R
+<a name="abcd"></a>
 
 L'équipe se nomme **EnF'R** qui signifie **En**richissement **F**onctionnel avec **R**. Elle est consituée de 4 membres, tous étudiants dans le master BIMS l'Université de Rouen Normandie. 
 
