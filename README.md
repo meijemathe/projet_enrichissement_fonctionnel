@@ -25,10 +25,7 @@ OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
 
 ![Organigramme](img/organigramme.png)
 
-Voici comment s'organise l'espace de dépôt GitHub. Les scripts à executer (ui.R et server.R) sont dans le dossier principal. Des fichiers d'exemple sont disponibles dans le dossier data. Le dossier R contient un script R (stats.R) qui correspondaux fonctions qui étaient demandées d'être codées à la main et un script R (cluster_profiler) qui regroupe des fonctions utilisant cluster profiler permettant de garder le script principal propre. Pour finir, les dossiers img et www contient des images utilisées dans ce readme et/ou dans le script (logo, gif de loader, ...)
-
-##TODO :  noveau fichier stats .R (trucs recodés à la main) => ajout ici + sur organigramme //
-##TODO : dossier R : sert à quoi ? 
+Voici comment s'organise l'espace de dépôt GitHub. Les scripts à executer (ui.R et server.R) sont dans le dossier principal. Des fichiers d'exemple sont disponibles dans le dossier data. Le dossier R contient 2 scripts R :  stats.R qui correspond aux fonctions qui étaient demandées d'être codées à la main et cluster_profiler.R qui regroupe des fonctions utilisant cluster profiler permettant de garder le script principal propre. Pour finir, les dossiers img et www contient des images utilisées dans ce readme et/ou dans le script (logo, gif de loader, ...)
 
 ## Installation et lancement de l'application #TODO
 
