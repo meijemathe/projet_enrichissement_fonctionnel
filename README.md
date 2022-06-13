@@ -1,16 +1,16 @@
 TODO : tri du main (clusterpro etc)
 # Enrichissement Fonctionnel avec R
 # TODO : table des matières 
-Présentation du projet : 
+Présentation du projet :   
 [Contexte et objectif(s)](#1)  
 [L'équipe EnF'R](#2)  
-Organsation des fichiers & lancement de l'application  
+Organsation des fichiers & lancement de l'application :    
 [Description de l'espace GitHub](#3)  
 [Installation et lancement de l'application](#4)  
 [Format des données](#5)  
 [Output attendus](#6)  
 [Erreurs communes](#7)  
-Bibliographie  
+Bibliographie :   
 [Données](#8)  
 [Packages & logiciels](#9)  
 
