@@ -463,7 +463,7 @@ function(input, output) {
                 })
                 output$pathway<- renderUI({
                   req(gsekk())
-                  choices=setNames(seq(1,nrow(gsekk()),by=1),gsekk()$Description)
+                  choices=setNames(1:nrow(as.data.frame(gsekk())),gsekk()$Description)
                   selectInput("select_path", label = "Pathway of interest for GSEA Plot",
                               choices=choices,
                               selected = 1
@@ -491,7 +491,7 @@ function(input, output) {
                 #kegg_gene_list gsea
                 path_pathplot_input <- reactive({
                         req(gsekk())
-                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = organism())
+                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = 'mmu')
                         #print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
                 })
                 output$path_pathplot <- renderImage({
