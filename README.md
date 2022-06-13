@@ -29,13 +29,13 @@ PETY Solene : solene.pety@etu.univ-rouen.fr
 LETERRIER Bryce : bryce.leterrier@univ-rouen.fr  
 OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr  
 
+# Détails sur les fichiers / dossiers 
+
 ## Description de l'espace GitHub #TODO
 
 ![Organigramme](img/organigramme.png)
 
 Voici comment s'organise l'espace de dépôt GitHub. Dans un premier temps ... 
-
-# Détails sur les fichiers / dossiers 
 
 ## Installation et lancement de l'application #TODO
 
