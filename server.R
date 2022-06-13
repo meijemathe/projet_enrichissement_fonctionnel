@@ -360,7 +360,7 @@ function(input, output) {
                 #plot GSEA
                 GO_GSEA_plot_input <- reactive({
                         req(gsego())
-                        gseaplot(gsekk(), by = "all", title = gsekk()$Description[as.numeric(input$select_path)], geneSetID = as.numeric(input$select_path))
+                        gseaplot(gsego(), by = "all", title = gsekk()$Description[1], geneSetID = 1)
                 })
                 output$GO_GSEA_plot <- renderPlot({
                         req(GO_GSEA_plot_input())
@@ -472,7 +472,7 @@ function(input, output) {
                 #plot GSEA
                 path_gseaplot_input <- reactive({
                         req(gsekk())
-                        gseaplot(gsekk(), by = "all", title = gsekk()$Description[1], geneSetID = 1)
+                        gseaplot(gsekk(), by = "all", title = gsekk()$Description[as.numeric(input$select_path)], geneSetID = as.numeric(input$select_path))
                 })
                 output$path_gseaplot <- renderPlot({
                         req(path_gseaplot_input())
