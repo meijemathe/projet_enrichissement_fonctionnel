@@ -21,7 +21,7 @@ OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
 
 # Détails sur les fichiers / dossiers 
 
-## Description de l'espace GitHub #TODO
+## Description de l'espace GitHub
 
 ![Organigramme](img/organigramme.png)
 
@@ -35,15 +35,19 @@ NOTE 1 : il est recommandé d'installer les packages une première fois avant de
 
 NOTE 2 : l'application tourne pour des version antérieurs (ou égale) à la version 4.1.2 du au package plotly qui n'est pas encore à jour avec cette version. 
 
-Afin d'utiliser l'application simplement, il faut tout d'abord télécharger l'archive contenant tous les fichiers source. Ensuite il faut lancer les fichiers ui.R et server.R et cliquer sur Run App. L'application Shiny se lancera et il sera possible d'upload les données à analyser (voir partie suivante pour l'utilisation en détail). 
+Afin d'utiliser l'application simplement, il faut tout d'abord télécharger l'archive contenant tous les fichiers source. Ensuite il faut lancer les fichiers ui.R et server.R et cliquer sur Run App. L'application Shiny se lancera et il sera possible d'upload les données à analyser.
+
+Voir parties suivantes pour l'utilisation en détail et eventuelles erreurs.
   
 ## Format des données  #TODO 
 
-screens => format imposé ! 
-- Noms colonnes
-- EnsemblID.....
+Les données d'entrée doivent suivre un format bien précis, tout manque résultat en une erreur qui empechera le lancera de l'application. Les données doivent être au format .csv avec des noms de colonnes similaire à l'image suivante ainsi que dans le même ordre. 
 
-Tableau en markdown + données d'exemple
+Exemple de format requis : 
+![format_data1](img/format_data_1.png)
+![format_data2](img/format_data_2.png)
+
+De plus, l'application ne fonctionne qu'avec des ensemblID. Il n'est pas possible d'utiliser de NCBIID pour le moment.
 
 ## Présentation des onglets et bonnes pratiques d’utilisations (warnings, erreurs …) #TODO
 
@@ -70,7 +74,7 @@ libssl-dev
 
 - Citation article contenant le jdd #TODO
 
-### Packages #TODO
+### Packages & logiciels
 
 **R** : R version 4.1.2 (2021-11-01) -- "Bird Hippie"
 
