@@ -15,8 +15,6 @@ Bibliographie :
 [Données](#8)  
 [Packages & logiciels](#9)  
 
-
-
 ## Présentation du projet 
 ### Contexte et objectif(s) <a name="1"></a>
 
@@ -25,7 +23,6 @@ Ce projet correspond à l'évaluation de l'UE UE5 Bioinformatique en Sciences Om
 Le but de ce projet est de coder une application web en R Shiny pour en faire un outil d'enrichissement fonctionnel en transcriptomique. Cet outil prend en entrée une matrice de comptage issue d’une expérience de séquencage ARNm (DEG) et retourne les résultats d'enrichissement fonctionnel avec des représentations graphiques associées.
 
 ### L'équipe EnF'R <a name="2"></a>
-
 
 L'équipe se nomme **EnF'R** qui signifie **En**richissement **F**onctionnel avec **R**. Elle est consituée de 4 membres, tous étudiants dans le master BIMS l'Université de Rouen Normandie. 
 
@@ -42,7 +39,7 @@ OLLIVIER Louis : louis.ollivier@etu.univ-rouen.fr
 
 Voici comment s'organise l'espace de dépôt GitHub. Les scripts à executer (ui.R et server.R) sont dans le dossier principal. Des fichiers d'exemple sont disponibles dans le dossier data. Le dossier R contient 2 scripts R :  stats.R qui correspond aux fonctions qui étaient demandées d'être codées à la main et cluster_profiler.R qui regroupe des fonctions utilisant cluster profiler permettant de garder le script principal propre. Pour finir, les dossiers img et www contient des images utilisées dans ce readme et/ou dans le script (logo, gif de loader, ...)
 
-### Installation et lancement de l'application #TODO <a name="4"></a>
+### Installation et lancement de l'application <a name="4"></a>
 
 ![Tuto_start](img/tuto_start.png)
 
@@ -72,19 +69,14 @@ De plus, l'application ne fonctionne qu'avec des ensemblID. Il n'est pas possibl
 données d'exemples dispo : 
 screens de plot ? 
 
-
-
-
 ### Erreurs communes #TODO <a name="7"></a>
 
-- Vérifier bonne version de R : commande #TODO
-- Sous Linux : certains packages ont besoin de ces librairies > à installer si cela ne fonctionne pas + commande #TODO
-- télécharger orgDg lors de la première utilisation
+- Vérifier d'avoir la bonne version de R : utiliser la commande sessioninfo(), la version doit être antérieur (ou égale) à 4.1.2 ;
+- Sous Linux : il peut être nécessaire d'installer au préalable certaines librairies : libcurl4-openssl-dev et libssl-dev. Utliser les commandes sudo apt install libcurl4-openssl-dev et/ou sudo apt install libssl-dev ;
+- Vérifier de bien avoir une connextion internet stable, notamment pour l'installation des packages, qui peut être lourde
+- ???  
 
-libcurl4-openssl-dev  
-libssl-dev
-
-## Bibliographie #TODO
+## Bibliographie
 ### Données #TODO <a name="8"></a>
 
 - Citation article contenant le jdd #TODO
