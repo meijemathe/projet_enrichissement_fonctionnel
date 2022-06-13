@@ -254,6 +254,8 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "GSEA plot",
+                                                                # Select box : pathway interest
+                                                                uiOutput("GO"),
                                                                 plotOutput("GO_GSEA_plot")%>% withSpinner(color="#0dc5c1")
                                                         )
                                                 )
