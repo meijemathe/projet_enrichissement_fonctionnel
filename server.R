@@ -141,14 +141,14 @@ function(input, output) {
                         data_db_ordered[which(data_db_ordered$V1==input$select_organism),2]
                 })
                 req(organism())
-                BiocManager::install(organism())
+                BiocManager::install(organism(), update = F)
                 # Get data from the uploaded file
                 data_prev <- reactive({
                         req(input$file)
                         df <- read.csv(input$file$datapath, sep = ";")
                         df["log2padj"] <- -log2(df["padj"])
                         
-                        #df <- df[df$padj < input$pvalue,]
+                        # df <- df[df$padj < input$pvalue,]
                         
                         if(startsWith(df$ID[1], "ENS")){
                                 df
@@ -294,8 +294,8 @@ function(input, output) {
                         
                 })
                 gene_list <- reactive({
-                        req(data_go())
-                        return(get_gene_list(data_go()))
+                        req(data_prev())
+                        return(get_gene_list(data_prev()))
                 })
                 ego <- reactive({
                         req(data_go(), organism(), input$go_ontology, input$go_pvalue)
@@ -324,7 +324,9 @@ function(input, output) {
                 )
                 gsego <- reactive({
                         req(gene_list(), organism(), input$go_ontology, input$go_pvalue)
-                        return(get_gsego(gene_list(), organism(), input$go_ontology, input$go_pvalue))
+                        x <- get_gsego(gene_list(), organism(), input$go_ontology, input$go_pvalue)
+                        validate(need(expr = (! isEmpty(as.data.frame(x))), message = "No differentially expressed gene found !"))
+                        return(x)
                 })
                 output$table_go_gsea <- DT::renderDataTable({
                   req(gsego())
@@ -396,8 +398,8 @@ function(input, output) {
                         paste('barplotORA.png', sep=''),
                         GO_ORA_barplot_input()
                         )
-                output$download_go_goplot <- download(
-                        paste('goplotORA.png', sep=''),
+                output$download_go_dotplot <- download(
+                        paste('dotplotORA.png', sep=''),
                         GO_ORA_goplot_input()
                 )
                 output$download_go_gseaplot <- download(
