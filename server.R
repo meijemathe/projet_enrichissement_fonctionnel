@@ -396,8 +396,8 @@ function(input, output) {
                         paste('barplotORA.png', sep=''),
                         GO_ORA_barplot_input()
                         )
-                output$download_go_dotplot <- download(
-                        paste('dotplotORA.png', sep=''),
+                output$download_go_goplot <- download(
+                        paste('goplotORA.png', sep=''),
                         GO_ORA_goplot_input()
                 )
                 output$download_go_gseaplot <- download(
