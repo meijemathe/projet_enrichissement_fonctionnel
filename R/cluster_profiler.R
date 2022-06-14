@@ -55,36 +55,106 @@ get_ego <- function(data, organism, process, pvalue){
                   ont = process,
                   pAdjustMethod = "BH",
                   pvalueCutoff  = pvalue)
-                  # qvalueCutoff  = 0.05)
+  # qvalueCutoff  = 0.05)
   return(ego)
 }
 
 get_gsego <- function(gene_list, organism, process, pvalue){
-  gsego <- gseGO(geneList=gene_list, 
-                  ont =process, 
-                  keyType = "ENSEMBL", 
-                  nPerm = 10000, 
-                  minGSSize = 3, 
-                  maxGSSize = 800, 
-                  pvalueCutoff = pvalue, 
-                  verbose = TRUE, 
-                  OrgDb = organism, 
-                  pAdjustMethod = "BH")
+  gsego <- gseGO(geneList = gene_list, 
+                 ont = process, 
+                 keyType = "ENSEMBL", 
+                 nPerm = 10000, 
+                 minGSSize = 3, 
+                 maxGSSize = 800, 
+                 pvalueCutoff = pvalue, 
+                 verbose = TRUE, 
+                 OrgDb = organism, 
+                 pAdjustMethod = "BH")
   return(gsego)
 }
 
-get_ekk <- function(data){
+db_to_organism <- function(db) {
+  # if this doesn't work 
+  # list of OrgDb packages is available here :
+  # https://www.bioconductor.org/packages/release/BiocViews.html#___OrgDb
+  # kegg friendly genome 3 letters codes are available here :
+  # https://www.genome.jp/dbget-bin/www_bfind?genome
+  if (grepl('Mm.', db)) {
+    # mouse 
+    org = 'mmu'
+  } else if (grepl('Hs.', db)) {
+    # human 
+    org = 'hsa'
+  } else if (grepl('Rn.', db)) {
+    # rat 
+    org = 'rno'
+  } else if (grepl('Dm.', db)) {
+    # fly 
+    org = 'dme'
+  } else if (grepl('At.', db)){
+    # arabidopsis
+    org = 'ath'
+  } else if (grepl('Sc.', db)) {
+    # yeast
+    org = 'sce'
+  } else if (grepl('Dr.', db)) {
+    # zebrafish
+    org = 'dre'
+  } else if (grepl('Ce.', db)) {
+    # worm
+    org = 'cel'
+  } else if (grepl('Bt.', db)) {
+    # bovine
+    org = 'bta'
+  } else if (grepl('Ss.', db)) {
+    # pig
+    org = 'ssc'
+  } else if (grepl('Gg.', db)) {
+    # chicken
+    org = 'gga'
+  } else if (grepl('Mmu.', db)) {
+    # rhesus
+    org = 'mcc'
+  } else if (grepl('Cf.', db)) {
+    # canine
+    org = 'cfa'
+  } else if (grepl('EcK12.', db)) {
+    # e coli strain K12
+    org = 'eco'
+  } else if (grepl('Xl.', db)) {
+    # xenopus
+    org = 'xla'
+  } else if (grepl('Ag.', db)) {
+    # anopheles
+    org = 'aga'
+  } else if (grepl('Pt.', db)) {
+    # chimpanzee
+    org = 'ptr'
+  } else if (grepl('EcSakai.', db)) {
+    # e coli strain sakai
+    org = 'ecs'
+  } else if (grepl('Mxanthus.', db)) {
+    # myxococcus xanthus DK 1622
+    org = 'mxa'
+  }
+  
+  return(org)
+}
+
+get_ekk <- function(data, pvalue, organism){
   ekk <- enrichKEGG(gene = data$Y,
-                    organism = 'mmu',
-                    pvalueCutoff = 0.05)
+                    organism = db_to_organism(organism),
+                    pvalueCutoff = pvalue,
+                    pAdjustMethod = "BH")
   return(ekk)
 }
 
-get_gsekk <- function(kegg_gene_list){
+get_gsekk <- function(kegg_gene_list, pvalue, organism){
   gsekk <- gseKEGG(geneList = kegg_gene_list,
-                 organism = 'mmu',
-                 pvalueCutoff = 0.05,
-                 verbose = FALSE)
+                   organism = db_to_organism(organism),
+                   pvalueCutoff = pvalue,
+                   pAdjustMethod = "BH",
+                   verbose = TRUE)
   return(gsekk)
 }
 
