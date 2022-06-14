@@ -148,7 +148,7 @@ function(input, output) {
                         df <- read.csv(input$file$datapath, sep = ";")
                         df["log2padj"] <- -log2(df["padj"])
                         
-                        df <- df[df$padj < input$pvalue,]
+                        #df <- df[df$padj < input$pvalue,]
                         
                         if(startsWith(df$ID[1], "ENS")){
                                 df
