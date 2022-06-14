@@ -65,7 +65,6 @@ De plus, l'application ne fonctionne qu'avec des ensemblID. Il n'est pas possibl
 - Vérifier d'avoir la bonne version de R : utiliser la commande sessioninfo(), la version doit être antérieur (ou égale) à 4.1.2 ;
 - Sous Linux : il peut être nécessaire d'installer au préalable certaines librairies : libcurl4-openssl-dev et libssl-dev. Utliser les commandes sudo apt install libcurl4-openssl-dev et/ou sudo apt install libssl-dev ;
 - Vérifier de bien avoir une connextion internet stable, notamment pour l'installation des packages, qui peut être lourde
-- ???  
 
 ## Bibliographie
 ### Données <a name="8"></a>
