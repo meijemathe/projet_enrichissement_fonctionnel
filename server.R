@@ -135,11 +135,20 @@ function(input, output) {
         # When the analysis is started
         observeEvent(input$start, {
                 req(input$file)
+                # load organism library
+                organism <- reactive({
+                        req(input$select_organism)
+                        data_db_ordered[which(data_db_ordered$V1==input$select_organism),2]
+                })
+                req(organism())
+                BiocManager::install(organism())
                 # Get data from the uploaded file
                 data_prev <- reactive({
                         req(input$file)
                         df <- read.csv(input$file$datapath, sep = ";")
                         df["log2padj"] <- -log2(df["padj"])
+                        
+                        df <- df[df$padj < input$pvalue,]
                         
                         if(startsWith(df$ID[1], "ENS")){
                                 df
@@ -149,14 +158,16 @@ function(input, output) {
                                 return(NULL)
                         }
                 })
-
+                
                 data <- reactive({
                         req(data_prev())
                         df <- data_prev()
+                        # View(df)
+                        # print(sum(df$padj < input$pvalue & (df$log2FC < -input$FC | df$log2FC > input$FC)))
                         df <- df[df$padj < input$pvalue & (df$log2FC < -input$FC | df$log2FC > input$FC),]
                         df
                 })
-                
+
                 # Create the action when the curser hovers on the plot
                 addHoverBehavior <- "function(el, x){
                         el.on('plotly_hover', function(data){
@@ -176,8 +187,8 @@ function(input, output) {
                 }
                 # Generate the volcano plot
                 volcanoPlot <- reactive({
-                        req(data())
-                        df <- data()
+                        req(data_prev())
+                        df <- data_prev()
                         df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
                                         ifelse(df["log2FC"] <= -input$FC & df["padj"] <= input$pvalue,"DOWN",
                                         "NO")
@@ -240,8 +251,8 @@ function(input, output) {
                 class = "display"
                 )
                 MAPlot <- reactive({
-                        req(data())
-                        df <- data()
+                        req(data_prev())
+                        df <- data_prev()
                         df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
                                             ifelse(df["log2FC"] <= -input$FC & df["padj"] <= input$pvalue,"DOWN",
                                                    "NO")
@@ -366,7 +377,6 @@ function(input, output) {
                 output$GO<- renderUI({
                         req(gsego())
                         table = as.data.frame(gsego())
-                        View(table)
                         choices=setNames(1:nrow(table),table$Description)
                         selectInput("select_GO", label = "GO term of interest for GSEA Plot",
                                     choices=choices,
@@ -402,6 +412,7 @@ function(input, output) {
 #####################################################################################
 ##                        Onglet Pathway Enrichment                                ##
 #####################################################################################
+                # get data depending on the DEG selection
                 data_path <- reactive({
                   req(data())
                   if(input$path_filter == 'DEG+'){
@@ -421,7 +432,7 @@ function(input, output) {
                 })
                 ekk <- reactive({
                         req(kegg_gene_list())
-                        return(get_ekk(kegg_gene_list()[[1]]))
+                        return(get_ekk(kegg_gene_list()[[1]], input$path_pvalue, organism()))
                 })
                 output$table_ekk <- DT::renderDataTable({
                   req(ekk())
@@ -445,7 +456,9 @@ function(input, output) {
                 )
                 gsekk <- reactive({
                         req(kegg_gene_list())
-                        return(get_gsekk(kegg_gene_list()[[2]]))
+                        x <- get_gsekk(kegg_gene_list()[[2]], input$path_pvalue, organism())
+                        validate(need(expr = (! isEmpty(as.data.frame(x@result))), message = "No differentially expressed gene found !"))
+                        return(x)
                 })
                 output$table_gsekk <- DT::renderDataTable({
                   req(gsekk())
@@ -504,16 +517,26 @@ function(input, output) {
                         print(path_dotplot_input())
                 })
                 #kegg_gene_list gsea
+                output$pathplot_list<- renderUI({
+                        req(gsekk())
+                        choices=setNames(gsekk()$ID,gsekk()$Description)
+                        print(choices)
+                        selectInput("select_path2", label = "Pathway of interest for Pathway plot",
+                                    choices=choices,
+                                    selected = 1
+                        )
+                })
                 path_pathplot_input <- reactive({
                         req(gsekk())
-                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = 'mmu')
+                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = db_to_organism(organism()), kegg.dir = 'www')
                         #print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
                 })
                 output$path_pathplot <- renderImage({
                         req(path_pathplot_input())
                         print(path_pathplot_input())
                         list(src = paste(gsekk()[1]$ID, ".pathview.png", sep = ""),
-                            alt = "This is alternate text")
+                            alt = "No pathview image found.",
+                            width = '20%')
                         #knitr::include_graphics(paste(gsekk()[2]$ID, ".pathview.png", sep = ""))
                 }, deleteFile = FALSE)
                 #boutons downloads
@@ -536,5 +559,72 @@ function(input, output) {
                 #                 file.copy(path_pathplot_input(), file)
                 #                 }
                 # )
+                
+#####################################################################################
+##                        Onglet Domain Enrichment                                ##
+#####################################################################################
+                # get data based on the DEG selection
+                data_domain <- reactive({
+                        req(data())
+                        if(input$domain_filter == 'DEG+'){
+                                return(data()[data()$log2FC > 0,])
+                        }
+                        else if(input$domain_filter == 'DEG-'){
+                                return(data()[data()$log2FC < 0,])
+                        }
+                        else {
+                                return(data())
+                        }
+                        
+                })
+                # Domain enrichment results datatable
+                domains_ORA_results <- reactive({
+                        req(data_domain(), organism())
+                        return(get_table_ORA_domains(data_domain(), organism(), input$domain_pvalue))
+                })
+                output$domain_ORA_datatable <- DT::renderDataTable({
+                        req(domains_ORA_results())
+                        df <- as.data.frame(domains_ORA_results())
+                        return(df)
+                        
+                },
+                extensions = 'Buttons',
+                rownames = FALSE,
+                escape = FALSE,
+                options = list(
+                        fixedColumns = TRUE,
+                        autoWidth = FALSE,
+                        ordering = TRUE,
+                        scrollX = TRUE,
+                        dom = 'Bfrtip',
+                        buttons = c('csv', 'excel')),
+                class = "display"
+                )
+                # barplot
+                domain_barplot_input <- reactive({
+                        req(domains_ORA_results())
+                        return(domains_ORA_barplot(domains_ORA_results()))
+                })
+                output$domain_barplot <- renderPlotly({
+                        req(domain_barplot_input())
+                        return(ggplotly(domain_barplot_input()))
+                })
+                # dotplot
+                domain_dotplot_input <- reactive({
+                        req(domains_ORA_results())
+                        return(domains_ORA_dotplot(domains_ORA_results()))
+                })
+                output$domain_dotplot <- renderPlotly({
+                        req(domain_dotplot_input())
+                        return(ggplotly(domain_dotplot_input()))
+                })
         })
+        observe({
+                req(input$select_path2)
+                image.path = file.path(getwd(), paste0(input$select_path2, ".pathview.png"))
+                print(image.path)
+                if(file.exists(image.path)) file.show(image.path)
+                else showModal(modalDialog(h4("The file does not exists."), easyClose = T, footer = modalButton("Ok")))
+        }) %>% bindEvent(input$png)
 }
+
