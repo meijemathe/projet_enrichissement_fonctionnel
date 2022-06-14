@@ -59,13 +59,13 @@ Exemple de format requis :
 
 De plus, l'application ne fonctionne qu'avec des ensemblID. Il n'est pas possible d'utiliser de NCBIID pour le moment.
 
-### Erreurs communes #TODO <a name="7"></a>
+### Erreurs communes <a name="7"></a>
 
 - Vérifier d'avoir la bonne version de R : utiliser la commande sessioninfo(), la version doit être antérieur (ou égale) à 4.1.2 ;
 - Sous Linux : il peut être nécessaire d'installer au préalable certaines librairies : libcurl4-openssl-dev et libssl-dev. Utliser les commandes sudo apt install libcurl4-openssl-dev et/ou sudo apt install libssl-dev ;
 - Vérifier de bien avoir une connextion internet stable, notamment pour l'installation des packages, qui peut être lourde
 - Il se peut qu'une erreur soit levée à cause du package OrgDB, cela ne cause pas de soucis pour la suite 
-- 
+  
 ## Bibliographie
 ### Données <a name="8"></a>
 
