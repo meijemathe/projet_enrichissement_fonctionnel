@@ -14,6 +14,8 @@
 #####################################################################
 # Initialisation des packages 
 
+print("test")
+
 options(timeout = 2000)
 if (!require('tibble', quietly = T)) install.packages('tibble');
 if (!require('shiny', quietly = T)) install.packages('shiny');
@@ -40,6 +42,8 @@ if (!require('topGO', quietly = T)) BiocManager::install("topGO");
 if (!require('ggplot2', quietly = T)) install.packages("ggplot2");
 if (!require('DOSE', quietly = T)) BiocManager::install("DOSE");
 
+
+
 library(tibble)
 library(shiny)
 library(shinydashboard)
@@ -64,6 +68,8 @@ library(topGO)
 library(ggplot2)
 library(DOSE)
 
+
+
 R.utils::setOption("clusterProfiler.download.method","auto")
 
 #####################################################################
@@ -74,6 +80,7 @@ httr::set_config(httr::config(ssl_verifypeer = FALSE))
 ####################################################### COMMANDES A UTILISER #######
 # validate(need(dim(frame)[1]>0, "No ID found :\n Are you sure you have selected the right organism ?"))
 ############################################################## Preparation de la liste des organismes disponibles ###########
+
 
 ah<-AnnotationHub()
 liste_all <- query(ah, c("OrgDb", "maintainer@bioconductor.org"))
@@ -141,12 +148,9 @@ function(input, output) {
                         data_db_ordered[which(data_db_ordered$V1==input$select_organism),2]
                 })
                 req(organism())
-                if (!require(organism(), quietly = T)){
-                        BiocManager::install(organism())
-                        # library(organism())
-                }
+                BiocManager::install(organism())
                 # Get data from the uploaded file
-                data <- reactive({
+                data_prev <- reactive({
                         req(input$file)
                         df <- read.csv(input$file$datapath, sep = ";")
                         df["log2padj"] <- -log2(df["padj"])
@@ -160,6 +164,15 @@ function(input, output) {
                                 shinyalert("Wrong ID format !","Need Ensembl ID", type="error")
                                 return(NULL)
                         }
+                })
+                
+                data <- reactive({
+                        req(data_prev())
+                        df <- data_prev()
+                        # View(df)
+                        # print(sum(df$padj < input$pvalue & (df$log2FC < -input$FC | df$log2FC > input$FC)))
+                        df <- df[df$padj < input$pvalue & (df$log2FC < -input$FC | df$log2FC > input$FC),]
+                        df
                 })
 
                 # Create the action when the curser hovers on the plot
@@ -181,8 +194,8 @@ function(input, output) {
                 }
                 # Generate the volcano plot
                 volcanoPlot <- reactive({
-                        req(data())
-                        df <- data()
+                        req(data_prev())
+                        df <- data_prev()
                         df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
                                         ifelse(df["log2FC"] <= -input$FC & df["padj"] <= input$pvalue,"DOWN",
                                         "NO")
@@ -245,8 +258,8 @@ function(input, output) {
                 class = "display"
                 )
                 MAPlot <- reactive({
-                        req(data())
-                        df <- data()
+                        req(data_prev())
+                        df <- data_prev()
                         df["DEG"] <- ifelse(df["log2FC"] >= input$FC & df["padj"] <= input$pvalue, "UP", 
                                             ifelse(df["log2FC"] <= -input$FC & df["padj"] <= input$pvalue,"DOWN",
                                                    "NO")
@@ -357,6 +370,15 @@ function(input, output) {
                         req(GO_ORA_barplot_input())
                         print(GO_ORA_goplot_input())
                 })
+                # gograph ORA
+                GO_ORA_gograph_input <- reactive({
+                        req(ego())
+                        plotGOgraph(ego())
+                })
+                output$GO_ORA_gograph <- renderPlot({
+                        req(GO_ORA_gograph_input())
+                        print(GO_ORA_gograph_input())
+                })
                 #dotplot GSEA
                 GO_GSEA_dotplot_input <- reactive({
                         req(gsego())
@@ -368,9 +390,18 @@ function(input, output) {
                         print(GO_GSEA_dotplot_input())
                 })
                 #plot GSEA
+                output$GO<- renderUI({
+                        req(gsego())
+                        table = as.data.frame(gsego())
+                        choices=setNames(1:nrow(table),table$Description)
+                        selectInput("select_GO", label = "GO term of interest for GSEA Plot",
+                                    choices=choices,
+                                    selected = 1
+                        )
+                })
                 GO_GSEA_plot_input <- reactive({
                         req(gsego())
-                        gseaplot(gsego(), by = "all", title = gsekk()$Description[1], geneSetID = 1)
+                        gseaplot(gsego(), by = "all", title = gsego()$Description[as.numeric(input$select_GO)], geneSetID = as.numeric(input$select_GO))
                 })
                 output$GO_GSEA_plot <- renderPlot({
                         req(GO_GSEA_plot_input())
@@ -381,9 +412,13 @@ function(input, output) {
                         paste('barplotORA.png', sep=''),
                         GO_ORA_barplot_input()
                         )
-                output$download_go_dotplot <- download(
-                        paste('dotplotORA.png', sep=''),
+                output$download_go_goplot <- download(
+                        paste('goplotORA.png', sep=''),
                         GO_ORA_goplot_input()
+                )
+                output$download_go_gograph <- download(
+                        paste('gographORA.png', sep=''),
+                        GO_ORA_gograph_input()
                 )
                 output$download_go_gseaplot <- download(
                         paste('ploGSEA.png', sep=''),
@@ -397,6 +432,7 @@ function(input, output) {
 #####################################################################################
 ##                        Onglet Pathway Enrichment                                ##
 #####################################################################################
+                # get data depending on the DEG selection
                 data_path <- reactive({
                   req(data())
                   if(input$path_filter == 'DEG+'){
@@ -440,7 +476,9 @@ function(input, output) {
                 )
                 gsekk <- reactive({
                         req(kegg_gene_list())
-                        return(get_gsekk(kegg_gene_list()[[2]], input$path_pvalue, organism()))
+                        x <- get_gsekk(kegg_gene_list()[[2]], input$path_pvalue, organism())
+                        validate(need(expr = (! isEmpty(as.data.frame(x@result))), message = "No differentially expressed gene found !"))
+                        return(x)
                 })
                 output$table_gsekk <- DT::renderDataTable({
                   req(gsekk())
@@ -499,16 +537,26 @@ function(input, output) {
                         print(path_dotplot_input())
                 })
                 #kegg_gene_list gsea
+                output$pathplot_list<- renderUI({
+                        req(gsekk())
+                        choices=setNames(gsekk()$ID,gsekk()$Description)
+                        print(choices)
+                        selectInput("select_path2", label = "Pathway of interest for Pathway plot",
+                                    choices=choices,
+                                    selected = 1
+                        )
+                })
                 path_pathplot_input <- reactive({
                         req(gsekk())
-                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = db_to_organism(organism()))
+                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = db_to_organism(organism()), kegg.dir = 'www')
                         #print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
                 })
                 output$path_pathplot <- renderImage({
                         req(path_pathplot_input())
                         print(path_pathplot_input())
                         list(src = paste(gsekk()[1]$ID, ".pathview.png", sep = ""),
-                            alt = "This is alternate text")
+                            alt = "No pathview image found.",
+                            width = '20%')
                         #knitr::include_graphics(paste(gsekk()[2]$ID, ".pathview.png", sep = ""))
                 }, deleteFile = FALSE)
                 #boutons downloads
@@ -531,41 +579,72 @@ function(input, output) {
                 #                 file.copy(path_pathplot_input(), file)
                 #                 }
                 # )
+                
 #####################################################################################
 ##                        Onglet Domain Enrichment                                ##
 #####################################################################################
-                domain_barplot <- reactive({
-                        req(data(), organism())
-                        return(test_ORA_domain(data(), organism()))
+                # get data based on the DEG selection
+                data_domain <- reactive({
+                        req(data())
+                        if(input$domain_filter == 'DEG+'){
+                                return(data()[data()$log2FC > 0,])
+                        }
+                        else if(input$domain_filter == 'DEG-'){
+                                return(data()[data()$log2FC < 0,])
+                        }
+                        else {
+                                return(data())
+                        }
+                        
                 })
-                output$domain_barplot <- renderPlot({
-                        req(domain_barplot())
-                        return(domain_barplot())
+                # Domain enrichment results datatable
+                domains_ORA_results <- reactive({
+                        req(data_domain(), organism())
+                        return(get_table_ORA_domains(data_domain(), organism(), input$domain_pvalue))
                 })
-                
-                #domains_interest_list <- reactive({
-                #        req(domains_gene_list(), organism())
-                #        return(get_domains_interest(domains_gene_list(), organism()))
-                #})
-                #genes_reference_list <- reactive({
-                #        return(get_genes_refrence(get(organism())))
-                #})
-                #domains_reference_list <- reactive({
-                #        return(get_domains_reference(get(organism())))
-                #})
-                #gene_list <- reactive({
-                #        req(data_go())
-                #        return(get_gene_list(data()))
-                #})
-                #domains_ORA_results <- reactive({
-                #        req(domains_reference_list(), gene_list(), genes_reference_list())
-                #        View(domains_reference_list())
-                #        return(get_domains_ORA_datatable(domains_reference_list(), gene_list(), genes_reference_list()))
-                #})
-                #output$domain_barplot <- renderPlot({
-                #        req(domains_ORA_results())
-                #        domains_barplot(domains_ORA_results(), input$domain_pvalue)
-                #})      
+                output$domain_ORA_datatable <- DT::renderDataTable({
+                        req(domains_ORA_results())
+                        df <- as.data.frame(domains_ORA_results())
+                        return(df)
+                        
+                },
+                extensions = 'Buttons',
+                rownames = FALSE,
+                escape = FALSE,
+                options = list(
+                        fixedColumns = TRUE,
+                        autoWidth = FALSE,
+                        ordering = TRUE,
+                        scrollX = TRUE,
+                        dom = 'Bfrtip',
+                        buttons = c('csv', 'excel')),
+                class = "display"
+                )
+                # barplot
+                domain_barplot_input <- reactive({
+                        req(domains_ORA_results())
+                        return(domains_ORA_barplot(domains_ORA_results()))
+                })
+                output$domain_barplot <- renderPlotly({
+                        req(domain_barplot_input())
+                        return(ggplotly(domain_barplot_input()))
+                })
+                # dotplot
+                domain_dotplot_input <- reactive({
+                        req(domains_ORA_results())
+                        return(domains_ORA_dotplot(domains_ORA_results()))
+                })
+                output$domain_dotplot <- renderPlotly({
+                        req(domain_dotplot_input())
+                        return(ggplotly(domain_dotplot_input()))
+                })
         })
+        observe({
+                req(input$select_path2)
+                image.path = file.path(getwd(), paste0(input$select_path2, ".pathview.png"))
+                print(image.path)
+                if(file.exists(image.path)) file.show(image.path)
+                else showModal(modalDialog(h4("The file does not exists."), easyClose = T, footer = modalButton("Ok")))
+        }) %>% bindEvent(input$png)
 }
 

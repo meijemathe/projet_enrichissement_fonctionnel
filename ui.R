@@ -227,15 +227,26 @@ ui = dashboardPage(
                                         ),
                                         fluidRow(
                                                 column(
-                                                        width = 12,
-                                                        DT::dataTableOutput(outputId = "table_go_ora")
+                                                        width = 6,
+                                                        box2(
+                                                                title = "GO graph",
+                                                                plotOutput("GO_ORA_gograph")%>% withSpinner(color="#0dc5c1")
+                                                        )
+                                                ),
+                                                column(
+                                                        width = 6,
+                                                        box2(
+                                                                title = "Download",
+                                                                downloadButton("download_go_barplot","Barplot"),
+                                                                downloadButton("download_go_goplot", "GO plot"),
+                                                                downloadButton("download_go_gograph", "GO graph")
+                                                        )
                                                 )
                                         ),
                                         fluidRow(
-                                                box2(
-                                                        title = "Download",
-                                                                downloadButton("download_go_barplot","Barplot"),
-                                                                downloadButton("download_go_dotplot", "Dotplot")
+                                                column(
+                                                        width = 12,
+                                                        DT::dataTableOutput(outputId = "table_go_ora")
                                                 )
                                         )
                                                         
@@ -254,8 +265,17 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "GSEA plot",
+                                                                # Select box : pathway interest
+                                                                uiOutput("GO"),
                                                                 plotOutput("GO_GSEA_plot")%>% withSpinner(color="#0dc5c1")
                                                         )
+                                                )
+                                        ),
+                                        fluidRow(
+                                                box2(
+                                                        title = "Download",
+                                                        downloadButton("download_go_gseaplot", "Dotplot"),
+                                                        downloadButton("download_go_goplot", "GSEA plot")
                                                 )
                                         ),
                                         fluidRow(
@@ -263,14 +283,8 @@ ui = dashboardPage(
                                                         width = 12,
                                                         DT::dataTableOutput(outputId = "table_go_gsea")
                                                 )
-                                        ),
-                                        fluidRow(
-                                                box2(
-                                                        title = "Download",
-                                                        downloadButton("download_go_gseaplot", "GSEA plot"),
-                                                        downloadButton("download_go_goplot", "GO plot")
-                                                )
                                         )
+                                        
                                 )
                         ),
                         
@@ -339,7 +353,17 @@ ui = dashboardPage(
                                         ),
                                         box2(
                                                 title = "Pathway plot",
-                                                plotOutput("path_pathplot")%>% withSpinner(color="#0dc5c1")
+                                                fluidRow(
+                                                        column(
+                                                                width = 10,
+                                                                uiOutput("pathplot_list")
+                                                        ),
+                                                        column(
+                                                                width = 2,
+                                                                actionButton("png", "Ouvrir l'image.")
+                                                        )
+                                                ),
+                                                imageOutput("path_pathplot")%>% withSpinner(color="#0dc5c1")
                                         )
                                 ),
                                 box2(
@@ -373,6 +397,7 @@ ui = dashboardPage(
                                         DT::dataTableOutput(outputId = "table_gsekk")
                                 )
                         ),
+                        # Fourth tab content : Protein Domains Enrichment
                         tabItem("prot_enrichment",
                                 fluidRow(
                                         column(
@@ -405,19 +430,43 @@ ui = dashboardPage(
                                                 )
                                         )
                                 ),
-                                box2(
-                                        title = "Domain barplot plot",
-                                        plotlyOutput("domain_barplot")%>% withSpinner(color="#0dc5c1")
+                                fluidRow(
+                                        conditionalPanel(
+                                                "input.domain_analysis_method == 'ORA'",
+                                                column(
+                                                        width = 6,
+                                                        box2(
+                                                                title = "ORA Barplot",
+                                                                plotlyOutput("domain_barplot")%>% withSpinner(color="#0dc5c1")
+                                                        )
+                                                ),
+                                                column(
+                                                        width = 6,
+                                                        box2(
+                                                                title = "Dotplot",
+                                                                plotlyOutput("domain_dotplot")%>% withSpinner(color="#0dc5c1")
+                                                        )
+                                                )
+                                                
+                                        ),
+                                        conditionalPanel(
+                                                "input.domain_analysis_method == 'GSEA'",
+                                                box2(
+                                                        title = "GSEA plot",
+                                                        plotlyOutput("domain_gseaplot")%>% withSpinner(color="#0dc5c1")
+                                                )
+                                                
+                                        ),
+                                        
                                 ),
-                                box2(
-                                        title = "Domain barplot plot",
-                                        plotlyOutput("domain_barplot2")%>% withSpinner(color="#0dc5c1")
+                                conditionalPanel(
+                                        "input.domain_analysis_method == 'ORA'",
+                                        dataTableOutput("domain_ORA_datatable")
                                 ),
-                                box2(
-                                        title = "Domain dotplot plot",
-                                        plotlyOutput("domain_dotplot")%>% withSpinner(color="#0dc5c1")
-                                ),
-                                dataTableOutput("domain_datatable")
+                                conditionalPanel(
+                                        "input.domain_analysis_method == 'GSEA'",
+                                        dataTableOutput("domain_GSEA_datatable")
+                                )
                         ),
                         tabItem(tabName = "about",
                                 includeMarkdown('README.md')
