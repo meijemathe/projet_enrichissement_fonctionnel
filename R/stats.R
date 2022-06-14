@@ -17,21 +17,53 @@ org_to_ensembldb <- function(organism){
   # to get all the available datasets run : 
   # > library(biomaRt)
   # > ensembl <- useEnsembl(biomart = "genes")
+  # > datasets <- listDatasets(ensembl)
   # > head(datasets)
+  # plants :
+  # > listEnsemblGenomes()
+  # > ensembl_plants <- useEnsemblGenomes(biomart = "plants_mart")
+  # > datasets_plants <- listDatasets(ensembl_plants)
+  # > head(datasets_plants)
+  
   if(organism == 'org.Mm.eg.db'){
     dataset = "mmusculus_gene_ensembl"
+  } else if(organism == 'org.Hs.eg.db'){
+    dataset = "hsapiens_gene_ensembl"
+  } else if(organism == 'org.Rn.eg.db'){
+    dataset = "rnorvegicus_gene_ensembl"
+  } else if(organism == 'org.Dm.eg.db'){
+    dataset = "dmelanogaster_gene_ensembl"
+  } else if(organism == 'org.At.tair.db'){
+    dataset = "athaliana_eg_gene"
+  } else if(organism == 'org.Sc.sgd.db'){
+    dataset = "scerevisiae_gene_ensembl"
+  } else if(organism == 'org.Dr.eg.db'){
+    dataset = "drerio_gene_ensembl"
+  } else if(organism == 'org.Ce.eg.db'){
+    dataset = "celegans_gene_ensembl"
+  } else if(organism == 'org.Bt.eg.db'){
+    dataset = "btaurus_gene_ensembl"
+  } else if(organism == 'org.Ss.eg.db'){
+    dataset = "sscrofa_gene_ensembl"
+  } else if(organism == 'org.Gg.eg.db'){
+    dataset = "ggallus_gene_ensembl"
+  } else if(organism == 'org.Mmu.eg.db'){
+    dataset = "mmulatta_gene_ensembl"
+  } else if(organism == 'org.Cf.eg.db'){
+    dataset = "clfamiliaris_gene_ensembl"
+  } else if(organism == 'org.EcK12.eg.db'){
+    dataset = "escherichia_coli_str_k_12_substr_mg1655_gca_000005845"
+  } else if(organism == 'org.Xl.eg.db'){
+    dataset = "xtropicalis_gene_ensembl"
+  } else if(organism == 'org.Ag.eg.db'){
+    dataset = "anopheles_gambiae"
+  } else if(organism == 'org.Pt.eg.db'){
+    dataset = "ptroglodytes_gene_ensembl"
+  } else if(organism == 'org.EcSakai.eg.db'){
+    dataset = "escherichia_coli_o157_h7_str_sakai_gca_000008865"
+  } else if(organism == 'org.Mxanthus.db'){
+    dataset = "myxococcus_xanthus_dk_1622_gca_000012685 "
   }
-  # btaurus_gene_ensembl
-  # celegans_gene_ensembl
-  # clfamiliaris_gene_ensembl
-  # dmelanogaster_gene_ensembl
-  # drerio_gene_ensembl
-  # ggallus_gene_ensembl 
-  # hsapiens_gene_ensembl 
-  # mmulatta_gene_ensembl
-  # ptroglodytes_gene_ensembl
-  # scerevisiae_gene_ensembl
-  # sscrofa_gene_ensembl
   return(dataset)
 }
 
