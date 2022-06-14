@@ -1,4 +1,3 @@
-TODO : tri du main (clusterpro etc)
 # Enrichissement Fonctionnel avec R
 
 ## Table des matières 
