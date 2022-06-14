@@ -231,7 +231,7 @@ ui = dashboardPage(
                                                 box2(
                                                         title = "Download",
                                                                 downloadButton("download_go_barplot","Barplot"),
-                                                                downloadButton("download_go_dotplot", "GO plot")
+                                                                downloadButton("download_go_goplot", "GO plot")
                                                 )
                                         ),
                                         fluidRow(
