@@ -68,9 +68,9 @@ De plus, l'application ne fonctionne qu'avec des ensemblID. Il n'est pas possibl
 - ???  
 
 ## Bibliographie
-### Données #TODO <a name="8"></a>
+### Données <a name="8"></a>
 
-- Citation article contenant le jdd #TODO
+Schultheiß C, Paschold L, Willscher E, et al. Maturation trajectories and transcriptional landscape of plasmablasts and autoreactive B cells in COVID-19. Iscience. 2021 Nov;24(11):103325. DOI: 10.1016/j.isci.2021.103325. PMID: 34723157; PMCID: PMC8536484.
 
 ### Packages & logiciels <a name="9"></a>
 
