@@ -38,6 +38,7 @@ if (!require('enrichplot', quietly = T)) BiocManager::install("enrichplot");
 if (!require('topGO', quietly = T)) BiocManager::install("topGO");
 if (!require('ggplot2', quietly = T)) install.packages("ggplot2");
 if (!require('DOSE', quietly = T)) BiocManager::install("DOSE");
+if (!require('shinycustomloader', quietly = T)) install.packages("shinycustomloader");
 
 library(shiny)
 library(shinydashboard)
@@ -61,6 +62,7 @@ library(enrichplot)
 library(topGO)
 library(ggplot2)
 library(DOSE)
+library(shinycustomloader)
 
 #####################################################################
 
@@ -115,13 +117,13 @@ ui = dashboardPage(
                                                 column(width = 6,
                                                        box2(
                                                                title = "Volcano plot",
-                                                               plotlyOutput("volcano")%>% withSpinner(color="#0dc5c1")
+                                                               withLoader(plotlyOutput("volcano"),type="html", loader="dnaspin")
                                                        )
                                                 ),
                                                 column(width = 6,
                                                        box2(
                                                                title = "MA plot",
-                                                               plotlyOutput("MA")%>% withSpinner(color="#0dc5c1")
+                                                               withLoader(plotlyOutput("MA"),type="html", loader="dnaspin")
                                                        )
                                                 )
                                         )
@@ -213,14 +215,14 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "Barplot",
-                                                                plotOutput("GO_ORA_barplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("GO_ORA_barplot"),type="html", loader="dnaspin")
                                                         )
                                                 ),
                                                 column(
                                                         width = 6,
                                                         box2(
                                                                 title = "GO plot",
-                                                                plotOutput("GO_ORA_goplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("GO_ORA_goplot"),type="html", loader="dnaspin")
                                                         )
                                                 )
                                                 
@@ -247,7 +249,7 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "Dotplot",
-                                                                plotOutput("GO_GSEA_dotplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("GO_GSEA_dotplot"),type="html", loader="dnaspin")
                                                         )
                                                 ),
                                                 column(
@@ -256,7 +258,7 @@ ui = dashboardPage(
                                                                 title = "GSEA plot",
                                                                 # Select box : pathway interest
                                                                 uiOutput("GO"),
-                                                                plotOutput("GO_GSEA_plot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("GO_GSEA_plot"),type="html", loader="dnaspin")
                                                         )
                                                 )
                                         ),
@@ -316,7 +318,7 @@ ui = dashboardPage(
                                         "input.path_analysis_method == 'ORA'",
                                         box2(
                                                 title = "Barplot",
-                                                plotOutput("path_barplot")%>% withSpinner(color="#0dc5c1")
+                                                withLoader(plotOutput("path_barplot"),type="html", loader="dnaspin")
                                         )
                                         
                                 ),
@@ -329,14 +331,14 @@ ui = dashboardPage(
                                                                 title = "GSEA plot",
                                                                 # Select box : pathway interest
                                                                 uiOutput("pathway"),
-                                                                plotOutput("path_gseaplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("path_gseaplot"),type="html", loader="dnaspin")
                                                         )
                                                 ),
                                                 column(
                                                         width = 6,
                                                         box2(
                                                                 title = "Dotplot",
-                                                                plotOutput("path_dotplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("path_dotplot"),type="html", loader="dnaspin")
                                                         )
                                                 )
                                         ),
@@ -352,7 +354,7 @@ ui = dashboardPage(
                                                                 actionButton("png", "Ouvrir l'image.")
                                                         )
                                                 ),
-                                                imageOutput("path_pathplot")%>% withSpinner(color="#0dc5c1")
+                                                withLoader(imageOutput("path_pathplot"),type="html", loader="dnaspin")
                                         )
                                 ),
                                 box2(
@@ -426,14 +428,14 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "ORA Barplot",
-                                                                plotlyOutput("domain_barplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotlyOutput("domain_barplot"),type="html", loader="dnaspin")
                                                         )
                                                 ),
                                                 column(
                                                         width = 6,
                                                         box2(
                                                                 title = "Dotplot",
-                                                                plotlyOutput("domain_dotplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotlyOutput("domain_dotplot"),type="html", loader="dnaspin")
                                                         )
                                                 )
                                                 
@@ -442,7 +444,7 @@ ui = dashboardPage(
                                                 "input.domain_analysis_method == 'GSEA'",
                                                 box2(
                                                         title = "GSEA plot",
-                                                        plotlyOutput("domain_gseaplot")%>% withSpinner(color="#0dc5c1")
+                                                        withLoader(plotlyOutput("domain_gseaplot"),type="html", loader="dnaspin")
                                                 )
                                                 
                                         ),
