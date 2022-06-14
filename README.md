@@ -185,9 +185,10 @@ Adrian Alexa and Jorg Rahnenfuhrer (2019). topGO: Enrichment Analysis for Gene
 H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New
   York, 2016.
 
-**DOSE**  :    
+**DOSE**  :   
 Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an
   R/Bioconductor package for Disease Ontology Semantic and Enrichment analysis.
   Bioinformatics 2015 31(4):608-609
 
-**shinycustomloader**  : Emi Tanaka and Niichan (2018). shinycustomloader: Custom Loader for Shiny Outputs. R package version 0.9.0. https://CRAN.R-project.org/package=shinycustomloader
+**shinycustomloader**  :  
+Emi Tanaka and Niichan (2018). shinycustomloader: Custom Loader for Shiny Outputs. R package version 0.9.0. https://CRAN.R-project.org/package=shinycustomloader
