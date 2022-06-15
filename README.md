@@ -12,6 +12,7 @@ Organsation des fichiers & lancement de l'application :
 Bibliographie :   
 [Données](#8)  
 [Packages & logiciels](#9)  
+[How to site](#10)  
 
 ## Présentation du projet 
 ### Contexte et objectif(s) <a name="1"></a>
@@ -193,3 +194,6 @@ Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an
 
 **shinycustomloader**  :  
 Emi Tanaka and Niichan (2018). shinycustomloader: Custom Loader for Shiny Outputs. R package version 0.9.0. https://CRAN.R-project.org/package=shinycustomloader
+
+## How to cite : <a name="10"><\a>
+EnF'R : an R Shiny application for functional enrichment analysis. Louis Ollivier, Bryce Leterrier, Meije Mathé, Solène Pety, Nicolas Vergne, Hélène Dauchel.
