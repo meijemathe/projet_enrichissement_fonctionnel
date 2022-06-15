@@ -529,14 +529,14 @@ function(input, output) {
                         )
                 })
                 path_pathplot_input <- reactive({
-                        req(gsekk())
-                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = db_to_organism(organism()), kegg.dir = 'www')
+                        req(input$select_path2)
+                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[input$select_path2]$ID, species = db_to_organism(organism()), kegg.dir = 'www')
                         #print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
                 })
                 output$path_pathplot <- renderImage({
                         req(path_pathplot_input())
                         print(path_pathplot_input())
-                        list(src = paste(gsekk()[1]$ID, ".pathview.png", sep = ""),
+                        list(src = paste(gsekk()[input$select_path2]$ID, ".pathview.png", sep = ""),
                             alt = "No pathview image found.",
                             width = '20%')
                         #knitr::include_graphics(paste(gsekk()[2]$ID, ".pathview.png", sep = ""))
