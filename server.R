@@ -627,7 +627,10 @@ function(input, output) {
                 req(input$select_path2)
                 image.path = file.path(getwd(), paste0(input$select_path2, ".pathview.png"))
                 print(image.path)
-                if(file.exists(image.path)) file.show(image.path)
+                if(file.exists(image.path)) {
+                        file.show(image.path)
+                        showModal(modalDialog(h4(paste("The file is open in your default image viewer and saved at : ", image.path, sep = "\n")), easyClose = T, footer = modalButton("Ok")))
+                }
                 else showModal(modalDialog(h4("The file does not exists."), easyClose = T, footer = modalButton("Ok")))
         }) %>% bindEvent(input$png)
 }
