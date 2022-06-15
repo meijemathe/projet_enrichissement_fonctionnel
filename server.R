@@ -624,62 +624,59 @@ function(input, output) {
                 })
                 
                 # GSEA domains
-                domains_GSEA_results <- reactive({
-                        req(data_domain(), organism())
-                        return(get_table_ORA_domains(data_domain(), organism(), input$domain_pvalue)[[1]])
-                })
-                output$domain_ORA_datatable <- DT::renderDataTable({
-                        req(domains_ORA_results())
-                        df <- as.data.frame(domains_ORA_results())
-                        Links <- paste0('<a href="http://www.ebi.ac.uk/interpro/entry/InterPro/',df$interproID,'" target="_blank">Interpro link</a>')
-                        df <- df %>% add_column(Links, .after ="interproID")
-                        return(df)
-                        
-                },
-                extensions = 'Buttons',
-                rownames = FALSE,
-                escape = FALSE,
-                options = list(
-                        fixedColumns = TRUE,
-                        autoWidth = FALSE,
-                        ordering = TRUE,
-                        scrollX = TRUE,
-                        dom = 'Bfrtip',
-                        buttons = c('csv', 'excel')),
-                class = "display"
-                )
-                # GSEA result
-                gsedom <- reactive({
-                        req(data_domain(), organism())
-                        return(get_table_ORA_domains(data_domain(), organism(), input$domain_pvalue)[[2]])
-                })
-                output$domains<- renderUI({
-                        req(gsedom())
-                        choices = setNames(1:nrow(as.data.frame(gsedom())),gsedom()$Description)
-                        selectInput("select_domain", label = "Domain of interest for GSEA Plot",
-                                    choices=choices,
-                                    selected = 1
-                        )
-                })
+                # domains_GSEA_results <- reactive({
+                #         req(data_domain(), organism())
+                #         return(get_table_ORA_domains(data_domain(), organism(), input$domain_pvalue)[[1]])
+                # })
+                # output$domain_GSEA_datatable <- DT::renderDataTable({
+                #         req(domains_GSEA_results())
+                #         return(df)
+                #         
+                # },
+                # extensions = 'Buttons',
+                # rownames = FALSE,
+                # escape = FALSE,
+                # options = list(
+                #         fixedColumns = TRUE,
+                #         autoWidth = FALSE,
+                #         ordering = TRUE,
+                #         scrollX = TRUE,
+                #         dom = 'Bfrtip',
+                #         buttons = c('csv', 'excel')),
+                # class = "display"
+                # )
+                # # GSEA result
+                # gsedom <- reactive({
+                #         req(data_domain(), organism())
+                #         return(get_table_GSEA_domains(data_domain(), organism(), input$domain_pvalue)[[2]])
+                # })
+                # output$domains<- renderUI({
+                #         req(gsedom())
+                #         choices = setNames(1:nrow(as.data.frame(gsedom())),gsedom()$Description)
+                #         selectInput("select_domain", label = "Domain of interest for GSEA Plot",
+                #                     choices=choices,
+                #                     selected = 1
+                #         )
+                # })
                 # dotplot
-                domain_gsea_dotplot_input <- reactive({
-                        req(gsedom())
-                        dotplot(gsedom(), showCategory = 10, title = "Enriched Pathways" , split=".sign") + 
-                                facet_grid(.~.sign)
-                })
-                output$domain_dotplot <- renderPlotly({
-                        req(domain_dotplot_input())
-                        print(domain_dotplot_input())
-                })
-                # gseaplot
-                domain_gsea_gseaplot_input <- reactive({
-                        req(gsedom())
-                        gseaplot(gsedom(), by = "all", title = gsedom()$Description[as.numeric(input$select_domain)], geneSetID = as.numeric(input$select_domain))
-                })
-                output$domain_gseaplot <- renderPlot({
-                        req(domain_gsea_dotplot_input())
-                        print(domain_gsea_dotplot_input())
-                })
+                # domain_gsea_dotplot_input <- reactive({
+                #         req(gsedom())
+                #         dotplot(gsedom(), showCategory = 10, title = "Enriched Pathways" , split=".sign") + 
+                #                 facet_grid(.~.sign)
+                # })
+                # output$domain_dotplot <- renderPlotly({
+                #         req(domain_dotplot_input())
+                #         print(domain_dotplot_input())
+                # })
+                # # gseaplot
+                # domain_gsea_gseaplot_input <- reactive({
+                #         req(gsedom())
+                #         gseaplot(gsedom(), by = "all", title = gsedom()$Description[as.numeric(input$select_domain)], geneSetID = as.numeric(input$select_domain))
+                # })
+                # output$domain_gseaplot <- renderPlot({
+                #         req(domain_gsea_dotplot_input())
+                #         print(domain_gsea_dotplot_input())
+                # })
                 
         })
         observe({

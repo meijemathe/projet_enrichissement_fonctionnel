@@ -403,12 +403,12 @@ ui = dashboardPage(
                                                 width = 6,
                                                 box2(
                                                         title = "Analysis method (ORA)", 
-                                                        # radioButtons(inputId = "domain_analysis_method", 
-                                                        #              label = NULL, 
-                                                        #              choiceValues = c("ORA","GSEA"), 
-                                                        #              choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
-                                                        # ),
-                                                        # hr(),
+                                                        radioButtons(inputId = "domain_analysis_method", 
+                                                                      label = NULL, 
+                                                                      choiceValues = c("ORA","GSEA"), 
+                                                                      choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                                        ),
+                                                        hr(),
                                                         radioButtons("domain_filter",
                                                                      label = NULL,
                                                                      choiceValue = c("DEG+", "DEG-", "both"),
@@ -450,29 +450,29 @@ ui = dashboardPage(
                                         fluidRow(
                                                 dataTableOutput("domain_ORA_datatable")
                                         )
-                                ),
-                                conditionalPanel(
-                                        "input.domain_analysis_method == 'GSEA'",
-                                        fluidRow(
-                                                column(
-                                                        width = 6,
-                                                        box2(
-                                                                title = "Dotplot",
-                                                                withLoader(plotlyOutput("domain_dotplot"),type="html", loader="dnaspin")
-                                                        )
-                                                ),
-                                                column(
-                                                        width = 6,
-                                                        box2(
-                                                                title = "GSEA plot",
-                                                                uiOutput("domains"),
-                                                                withLoader(plotlyOutput("domain_gseaplot"),type="html", loader="dnaspin")
-                                                        )
-                                                )
-                                        ),
-                                        fluidRow(
-                                                dataTableOutput("domain_GSEA_datatable")
-                                        )
+                                # ),
+                                # conditionalPanel(
+                                #         "input.domain_analysis_method == 'GSEA'",
+                                #         fluidRow(
+                                #                 column(
+                                #                         width = 6,
+                                #                         box2(
+                                #                                 title = "Dotplot",
+                                #                                 withLoader(plotlyOutput("domain_dotplot"),type="html", loader="dnaspin")
+                                #                         )
+                                #                 ),
+                                #                 column(
+                                #                         width = 6,
+                                #                         box2(
+                                #                                 title = "GSEA plot",
+                                #                                 uiOutput("domains"),
+                                #                                 withLoader(plotlyOutput("domain_gseaplot"),type="html", loader="dnaspin")
+                                #                         )
+                                #                 )
+                                #         ),
+                                #         fluidRow(
+                                #                 dataTableOutput("domain_GSEA_datatable")
+                                #         )
                                 )
                         ),
                         tabItem(tabName = "about",
