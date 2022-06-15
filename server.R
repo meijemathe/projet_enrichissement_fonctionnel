@@ -305,7 +305,7 @@ function(input, output) {
                   req(ego())
                   df <- as.data.frame(ego()) 
                   df <-df[ , -which(names(df) %in% c("geneID"))]
-                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'">GO link</a>')
+                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'" target="_blank">GO link</a>')
                   df <- df %>% add_column(Links, .after ="ID")
                   return(df)
                   
@@ -325,14 +325,14 @@ function(input, output) {
                 gsego <- reactive({
                         req(gene_list(), organism(), input$go_ontology, input$go_pvalue)
                         x <- get_gsego(gene_list(), organism(), input$go_ontology, input$go_pvalue)
-                        validate(need(expr = (! isEmpty(as.data.frame(x))), message = "No differentially expressed gene found !"))
+                        validate(need(expr = (! isEmpty(as.data.frame(x))), message = "No gene found for this p-value cutoff !"))
                         return(x)
                 })
                 output$table_go_gsea <- DT::renderDataTable({
                   req(gsego())
                   df <- as.data.frame(gsego()) 
                   df <-df[ , -which(names(df) %in% c("core_enrichment"))]
-                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'">GO link</a>')
+                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'" target="_blank">GO link</a>')
                   df <- df %>% add_column(Links, .after ="ID")
                   return(df)
                 },
@@ -440,7 +440,7 @@ function(input, output) {
                   req(ekk())
                   df <- as.data.frame(ekk())
                   df <-df[ , -which(names(df) %in% c("geneID"))]
-                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'">KEGG link</a>')
+                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'" target="_blank">KEGG link</a>')
                   df <- df %>% add_column(Links, .after ="ID")
                   return(df)
                 },
@@ -459,14 +459,14 @@ function(input, output) {
                 gsekk <- reactive({
                         req(kegg_gene_list())
                         x <- get_gsekk(kegg_gene_list()[[2]], input$path_pvalue, organism())
-                        validate(need(expr = (! isEmpty(as.data.frame(x@result))), message = "No differentially expressed gene found !"))
+                        validate(need(expr = (! isEmpty(as.data.frame(x@result))), message = "No gene found for this p-value cutoff !"))
                         return(x)
                 })
                 output$table_gsekk <- DT::renderDataTable({
                   req(gsekk())
                   df <- as.data.frame(gsekk()@result)
                   df <-df[ , -which(names(df) %in% c("core_enrichment"))]
-                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'">KEGG link</a>')
+                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'" target="_blank">KEGG link</a>')
                   df <- df %>% add_column(Links, .after ="ID")
                   return(df)
                 },
@@ -587,6 +587,8 @@ function(input, output) {
                 output$domain_ORA_datatable <- DT::renderDataTable({
                         req(domains_ORA_results())
                         df <- as.data.frame(domains_ORA_results())
+                        Links <- paste0('<a href="http://www.ebi.ac.uk/interpro/entry/InterPro/',df$interproID,'" target="_blank">Interpro link</a>')
+                        df <- df %>% add_column(Links, .after ="interproID")
                         return(df)
                         
                 },
