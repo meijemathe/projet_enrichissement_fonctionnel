@@ -14,8 +14,6 @@
 #####################################################################
 # Initialisation des packages 
 
-print("test")
-
 options(timeout = 2000)
 if (!require('tibble', quietly = T)) install.packages('tibble');
 if (!require('shiny', quietly = T)) install.packages('shiny');
@@ -42,8 +40,6 @@ if (!require('topGO', quietly = T)) BiocManager::install("topGO");
 if (!require('ggplot2', quietly = T)) install.packages("ggplot2");
 if (!require('DOSE', quietly = T)) BiocManager::install("DOSE");
 
-
-
 library(tibble)
 library(shiny)
 library(shinydashboard)
@@ -68,8 +64,6 @@ library(topGO)
 library(ggplot2)
 library(DOSE)
 
-
-
 R.utils::setOption("clusterProfiler.download.method","auto")
 
 #####################################################################
@@ -80,7 +74,6 @@ httr::set_config(httr::config(ssl_verifypeer = FALSE))
 ####################################################### COMMANDES A UTILISER #######
 # validate(need(dim(frame)[1]>0, "No ID found :\n Are you sure you have selected the right organism ?"))
 ############################################################## Preparation de la liste des organismes disponibles ###########
-
 
 ah<-AnnotationHub()
 liste_all <- query(ah, c("OrgDb", "maintainer@bioconductor.org"))
@@ -148,14 +141,14 @@ function(input, output) {
                         data_db_ordered[which(data_db_ordered$V1==input$select_organism),2]
                 })
                 req(organism())
-                BiocManager::install(organism())
+                BiocManager::install(organism(), update = F)
                 # Get data from the uploaded file
                 data_prev <- reactive({
                         req(input$file)
                         df <- read.csv(input$file$datapath, sep = ";")
                         df["log2padj"] <- -log2(df["padj"])
                         
-                        df <- df[df$padj < input$pvalue,]
+                        # df <- df[df$padj < input$pvalue,]
                         
                         if(startsWith(df$ID[1], "ENS")){
                                 df
@@ -301,8 +294,8 @@ function(input, output) {
                         
                 })
                 gene_list <- reactive({
-                        req(data_go())
-                        return(get_gene_list(data_go()))
+                        req(data_prev())
+                        return(get_gene_list(data_prev()))
                 })
                 ego <- reactive({
                         req(data_go(), organism(), input$go_ontology, input$go_pvalue)
@@ -312,7 +305,7 @@ function(input, output) {
                   req(ego())
                   df <- as.data.frame(ego()) 
                   df <-df[ , -which(names(df) %in% c("geneID"))]
-                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'">GO link</a>')
+                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'" target="_blank">GO link</a>')
                   df <- df %>% add_column(Links, .after ="ID")
                   return(df)
                   
@@ -331,13 +324,15 @@ function(input, output) {
                 )
                 gsego <- reactive({
                         req(gene_list(), organism(), input$go_ontology, input$go_pvalue)
-                        return(get_gsego(gene_list(), organism(), input$go_ontology, input$go_pvalue))
+                        x <- get_gsego(gene_list(), organism(), input$go_ontology, input$go_pvalue)
+                        validate(need(expr = (! isEmpty(as.data.frame(x))), message = "No gene found for this p-value cutoff !"))
+                        return(x)
                 })
                 output$table_go_gsea <- DT::renderDataTable({
                   req(gsego())
                   df <- as.data.frame(gsego()) 
                   df <-df[ , -which(names(df) %in% c("core_enrichment"))]
-                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'">GO link</a>')
+                  Links <- paste0('<a href="https://www.ebi.ac.uk/QuickGO/GTerm?id=',df$ID,'" target="_blank">GO link</a>')
                   df <- df %>% add_column(Links, .after ="ID")
                   return(df)
                 },
@@ -369,15 +364,6 @@ function(input, output) {
                 output$GO_ORA_goplot <- renderPlot({
                         req(GO_ORA_barplot_input())
                         print(GO_ORA_goplot_input())
-                })
-                # gograph ORA
-                GO_ORA_gograph_input <- reactive({
-                        req(ego())
-                        plotGOgraph(ego())
-                })
-                output$GO_ORA_gograph <- renderPlot({
-                        req(GO_ORA_gograph_input())
-                        print(GO_ORA_gograph_input())
                 })
                 #dotplot GSEA
                 GO_GSEA_dotplot_input <- reactive({
@@ -412,13 +398,9 @@ function(input, output) {
                         paste('barplotORA.png', sep=''),
                         GO_ORA_barplot_input()
                         )
-                output$download_go_goplot <- download(
-                        paste('goplotORA.png', sep=''),
+                output$download_go_dotplot <- download(
+                        paste('dotplotORA.png', sep=''),
                         GO_ORA_goplot_input()
-                )
-                output$download_go_gograph <- download(
-                        paste('gographORA.png', sep=''),
-                        GO_ORA_gograph_input()
                 )
                 output$download_go_gseaplot <- download(
                         paste('ploGSEA.png', sep=''),
@@ -458,7 +440,7 @@ function(input, output) {
                   req(ekk())
                   df <- as.data.frame(ekk())
                   df <-df[ , -which(names(df) %in% c("geneID"))]
-                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'">KEGG link</a>')
+                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'" target="_blank">KEGG link</a>')
                   df <- df %>% add_column(Links, .after ="ID")
                   return(df)
                 },
@@ -477,14 +459,14 @@ function(input, output) {
                 gsekk <- reactive({
                         req(kegg_gene_list())
                         x <- get_gsekk(kegg_gene_list()[[2]], input$path_pvalue, organism())
-                        validate(need(expr = (! isEmpty(as.data.frame(x@result))), message = "No differentially expressed gene found !"))
+                        validate(need(expr = (! isEmpty(as.data.frame(x@result))), message = "No gene found for this p-value cutoff !"))
                         return(x)
                 })
                 output$table_gsekk <- DT::renderDataTable({
                   req(gsekk())
                   df <- as.data.frame(gsekk()@result)
                   df <-df[ , -which(names(df) %in% c("core_enrichment"))]
-                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'">KEGG link</a>')
+                  Links <- paste0('<a href="https://www.genome.jp/entry/',df$ID,'" target="_blank">KEGG link</a>')
                   df <- df %>% add_column(Links, .after ="ID")
                   return(df)
                 },
@@ -547,14 +529,14 @@ function(input, output) {
                         )
                 })
                 path_pathplot_input <- reactive({
-                        req(gsekk())
-                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[1]$ID, species = db_to_organism(organism()), kegg.dir = 'www')
+                        req(input$select_path2)
+                        pathview(gene.data=kegg_gene_list()[[2]], pathway.id=gsekk()[input$select_path2]$ID, species = db_to_organism(organism()), kegg.dir = 'www')
                         #print(paste(gsekk()[1]$ID, ".pathview.png", sep = ""))
                 })
                 output$path_pathplot <- renderImage({
                         req(path_pathplot_input())
                         print(path_pathplot_input())
-                        list(src = paste(gsekk()[1]$ID, ".pathview.png", sep = ""),
+                        list(src = paste(gsekk()[input$select_path2]$ID, ".pathview.png", sep = ""),
                             alt = "No pathview image found.",
                             width = '20%')
                         #knitr::include_graphics(paste(gsekk()[2]$ID, ".pathview.png", sep = ""))
@@ -605,6 +587,8 @@ function(input, output) {
                 output$domain_ORA_datatable <- DT::renderDataTable({
                         req(domains_ORA_results())
                         df <- as.data.frame(domains_ORA_results())
+                        Links <- paste0('<a href="http://www.ebi.ac.uk/interpro/entry/InterPro/',df$interproID,'" target="_blank">Interpro link</a>')
+                        df <- df %>% add_column(Links, .after ="interproID")
                         return(df)
                         
                 },
@@ -638,12 +622,74 @@ function(input, output) {
                         req(domain_dotplot_input())
                         return(ggplotly(domain_dotplot_input()))
                 })
+                
+                # GSEA domains
+                domains_GSEA_results <- reactive({
+                        req(data_domain(), organism())
+                        return(get_table_ORA_domains(data_domain(), organism(), input$domain_pvalue)[[1]])
+                })
+                output$domain_ORA_datatable <- DT::renderDataTable({
+                        req(domains_ORA_results())
+                        df <- as.data.frame(domains_ORA_results())
+                        Links <- paste0('<a href="http://www.ebi.ac.uk/interpro/entry/InterPro/',df$interproID,'" target="_blank">Interpro link</a>')
+                        df <- df %>% add_column(Links, .after ="interproID")
+                        return(df)
+                        
+                },
+                extensions = 'Buttons',
+                rownames = FALSE,
+                escape = FALSE,
+                options = list(
+                        fixedColumns = TRUE,
+                        autoWidth = FALSE,
+                        ordering = TRUE,
+                        scrollX = TRUE,
+                        dom = 'Bfrtip',
+                        buttons = c('csv', 'excel')),
+                class = "display"
+                )
+                # GSEA result
+                gsedom <- reactive({
+                        req(data_domain(), organism())
+                        return(get_table_ORA_domains(data_domain(), organism(), input$domain_pvalue)[[2]])
+                })
+                output$domains<- renderUI({
+                        req(gsedom())
+                        choices = setNames(1:nrow(as.data.frame(gsedom())),gsedom()$Description)
+                        selectInput("select_domain", label = "Domain of interest for GSEA Plot",
+                                    choices=choices,
+                                    selected = 1
+                        )
+                })
+                # dotplot
+                domain_gsea_dotplot_input <- reactive({
+                        req(gsedom())
+                        dotplot(gsedom(), showCategory = 10, title = "Enriched Pathways" , split=".sign") + 
+                                facet_grid(.~.sign)
+                })
+                output$domain_dotplot <- renderPlotly({
+                        req(domain_dotplot_input())
+                        print(domain_dotplot_input())
+                })
+                # gseaplot
+                domain_gsea_gseaplot_input <- reactive({
+                        req(gsedom())
+                        gseaplot(gsedom(), by = "all", title = gsedom()$Description[as.numeric(input$select_domain)], geneSetID = as.numeric(input$select_domain))
+                })
+                output$domain_gseaplot <- renderPlot({
+                        req(domain_gsea_dotplot_input())
+                        print(domain_gsea_dotplot_input())
+                })
+                
         })
         observe({
                 req(input$select_path2)
                 image.path = file.path(getwd(), paste0(input$select_path2, ".pathview.png"))
                 print(image.path)
-                if(file.exists(image.path)) file.show(image.path)
+                if(file.exists(image.path)) {
+                        file.show(image.path)
+                        showModal(modalDialog(h4(paste("The file is open in your default image viewer and saved at : ", image.path, sep = "\n")), easyClose = T, footer = modalButton("Ok")))
+                }
                 else showModal(modalDialog(h4("The file does not exists."), easyClose = T, footer = modalButton("Ok")))
         }) %>% bindEvent(input$png)
 }

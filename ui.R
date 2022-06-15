@@ -38,6 +38,7 @@ if (!require('enrichplot', quietly = T)) BiocManager::install("enrichplot");
 if (!require('topGO', quietly = T)) BiocManager::install("topGO");
 if (!require('ggplot2', quietly = T)) install.packages("ggplot2");
 if (!require('DOSE', quietly = T)) BiocManager::install("DOSE");
+if (!require('shinycustomloader', quietly = T)) install.packages("shinycustomloader");
 
 library(shiny)
 library(shinydashboard)
@@ -61,6 +62,7 @@ library(enrichplot)
 library(topGO)
 library(ggplot2)
 library(DOSE)
+library(shinycustomloader)
 
 #####################################################################
 
@@ -115,13 +117,13 @@ ui = dashboardPage(
                                                 column(width = 6,
                                                        box2(
                                                                title = "Volcano plot",
-                                                               plotlyOutput("volcano")%>% withSpinner(color="#0dc5c1")
+                                                               withLoader(plotlyOutput("volcano"),type="html", loader="dnaspin")
                                                        )
                                                 ),
                                                 column(width = 6,
                                                        box2(
                                                                title = "MA plot",
-                                                               plotlyOutput("MA")%>% withSpinner(color="#0dc5c1")
+                                                               withLoader(plotlyOutput("MA"),type="html", loader="dnaspin")
                                                        )
                                                 )
                                         )
@@ -161,11 +163,14 @@ ui = dashboardPage(
                                                                      choiceValues = c("ORA","GSEA"), 
                                                                      choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
                                                         ),
-                                                        hr(),
-                                                        radioButtons("go_filter",
-                                                                     label = NULL,
-                                                                     choiceValue = c("DEG+", "DEG-", "both"),
-                                                                     choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
+                                                        conditionalPanel(
+                                                                "input.go_analysis_method == 'ORA'",
+                                                                hr(),
+                                                                radioButtons("go_filter",
+                                                                             label = NULL,
+                                                                             choiceValue = c("DEG+", "DEG-", "both"),
+                                                                             choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
+                                                                )
                                                         )
                                                 )
                                         ),
@@ -213,34 +218,23 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "Barplot",
-                                                                plotOutput("GO_ORA_barplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("GO_ORA_barplot"),type="html", loader="dnaspin")
                                                         )
                                                 ),
                                                 column(
                                                         width = 6,
                                                         box2(
                                                                 title = "GO plot",
-                                                                plotOutput("GO_ORA_goplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("GO_ORA_goplot"),type="html", loader="dnaspin")
                                                         )
                                                 )
                                                 
                                         ),
                                         fluidRow(
-                                                column(
-                                                        width = 6,
-                                                        box2(
-                                                                title = "GO graph",
-                                                                plotOutput("GO_ORA_gograph")%>% withSpinner(color="#0dc5c1")
-                                                        )
-                                                ),
-                                                column(
-                                                        width = 6,
-                                                        box2(
-                                                                title = "Download",
+                                                box2(
+                                                        title = "Download",
                                                                 downloadButton("download_go_barplot","Barplot"),
-                                                                downloadButton("download_go_goplot", "GO plot"),
-                                                                downloadButton("download_go_gograph", "GO graph")
-                                                        )
+                                                                downloadButton("download_go_dotplot", "GO plot")
                                                 )
                                         ),
                                         fluidRow(
@@ -258,7 +252,7 @@ ui = dashboardPage(
                                                         width = 6,
                                                         box2(
                                                                 title = "Dotplot",
-                                                                plotOutput("GO_GSEA_dotplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("GO_GSEA_dotplot"),type="html", loader="dnaspin")
                                                         )
                                                 ),
                                                 column(
@@ -267,7 +261,7 @@ ui = dashboardPage(
                                                                 title = "GSEA plot",
                                                                 # Select box : pathway interest
                                                                 uiOutput("GO"),
-                                                                plotOutput("GO_GSEA_plot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("GO_GSEA_plot"),type="html", loader="dnaspin")
                                                         )
                                                 )
                                         ),
@@ -291,29 +285,32 @@ ui = dashboardPage(
                         # Third tab content : Pathways Enrichment
                         tabItem(tabName = "path_enrichment",
                                 fluidRow(
-                                         box2(
-                                              title = "Analysis method", 
-                                              fluidRow(
-                                                      column(
-                                                              width = 6,
-                                                              radioButtons(inputId = "path_analysis_method", 
-                                                                           label = NULL, 
-                                                                           choiceValues = c("ORA","GSEA"), 
-                                                                           choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                        box2(
+                                                title = "Analysis method", 
+                                                fluidRow(
+                                                        column(
+                                                                width = 6,
+                                                                radioButtons(inputId = "path_analysis_method", 
+                                                                             label = NULL, 
+                                                                             choiceValues = c("ORA","GSEA"), 
+                                                                             choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
                                                                 )
                                                         ),
-                                                      column(
-                                                              width = 6,
-                                                              radioButtons("path_filter",
-                                                                           label = NULL,
-                                                                           choiceValue = c("DEG+", "DEG-", "both"),
-                                                                           choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
-                                                              )
-                                                      )
+                                                        conditionalPanel(
+                                                                "input.path_analysis_method == 'ORA'",
+                                                                column(
+                                                                        width = 6,
+                                                                        radioButtons("path_filter",
+                                                                                     label = NULL,
+                                                                                     choiceValue = c("DEG+", "DEG-", "both"),
+                                                                                     choiceNames = c("Over expressed DEG only", "Under expressed DEG only", "Both")
+                                                                        )
+                                                                )
+                                                        )
                                                 )
-                                            )
-                                                 
-                                        ),
+                                        )
+                                        
+                                ),
 
                                                 #box2(
                                                  #       title = "Database", 
@@ -323,13 +320,32 @@ ui = dashboardPage(
                                                      #                choiceNames = c("KEGG", "Reactome")
                                                       #  )
                                # ),
+                                box2(
+                                        title = "Plot settings",
+                                        sliderInput("path_pvalue",
+                                                    min = 0, 
+                                                    max = 1, 
+                                                    value = 0.05, 
+                                                    label = "Select a adjusted p-value cutoff"
+                                        )
+                                ),
                                 conditionalPanel(
                                         "input.path_analysis_method == 'ORA'",
-                                        box2(
-                                                title = "Barplot",
-                                                plotOutput("path_barplot")%>% withSpinner(color="#0dc5c1")
+                                        fluidRow(
+                                                box2(
+                                                        title = "Barplot",
+                                                        withLoader(plotOutput("path_barplot"),type="html", loader="dnaspin")
+                                                )
+                                        ),
+                                        fluidRow(
+                                                box2(
+                                                        title = "Download",
+                                                        downloadButton("download_path_barplot","Barplot")
+                                                )
+                                        ),
+                                        fluidRow(
+                                                DT::dataTableOutput(outputId = "table_ekk")
                                         )
-                                        
                                 ),
                                 conditionalPanel(
                                         "input.path_analysis_method == 'GSEA'",
@@ -340,61 +356,44 @@ ui = dashboardPage(
                                                                 title = "GSEA plot",
                                                                 # Select box : pathway interest
                                                                 uiOutput("pathway"),
-                                                                plotOutput("path_gseaplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("path_gseaplot"),type="html", loader="dnaspin")
                                                         )
                                                 ),
                                                 column(
                                                         width = 6,
                                                         box2(
                                                                 title = "Dotplot",
-                                                                plotOutput("path_dotplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotOutput("path_dotplot"),type="html", loader="dnaspin")
                                                         )
                                                 )
                                         ),
-                                        box2(
-                                                title = "Pathway plot",
-                                                fluidRow(
-                                                        column(
-                                                                width = 10,
-                                                                uiOutput("pathplot_list")
+                                        fluidRow(
+                                                box2(
+                                                        title = "Pathway plot",
+                                                        fluidRow(
+                                                                column(
+                                                                        width = 10,
+                                                                        uiOutput("pathplot_list")
+                                                                ),
+                                                                column(
+                                                                        width = 2,
+                                                                        actionButton("png", "Ouvrir l'image.")
+                                                                )
                                                         ),
-                                                        column(
-                                                                width = 2,
-                                                                actionButton("png", "Ouvrir l'image.")
-                                                        )
-                                                ),
-                                                imageOutput("path_pathplot")%>% withSpinner(color="#0dc5c1")
-                                        )
-                                ),
-                                box2(
-                                        title = "Plot settings",
-                                        sliderInput("path_pvalue",
-                                                    min = 0, 
-                                                    max = 1, 
-                                                    value = 0.05, 
-                                                    label = "Select a adjusted p-value cutoff"
-                                        )
-                                ),
-                                box2(
-                                        title = "Download",
-                                        conditionalPanel(
-                                                "input.path_analysis_method == 'ORA'",
-                                                downloadButton("download_path_barplot","Barplot"),
+                                                        withLoader(imageOutput("path_pathplot"),type="html", loader="dnaspin")
+                                                )
                                         ),
-                                        conditionalPanel(
-                                                "input.path_analysis_method == 'GSEA'",
-                                                downloadButton("download_path_dotplot", "Dotplot"),
-                                                downloadButton("download_path_gseaplot", "GSEA plot"),
-                                                downloadButton("download_path_goplot", "Path plot")
+                                        fluidRow(
+                                                box2(
+                                                        title = "Download",
+                                                        downloadButton("download_path_dotplot", "Dotplot"),
+                                                        downloadButton("download_path_gseaplot", "GSEA plot")
+                                                        # downloadButton("download_path_goplot", "Path plot")
+                                                )
+                                        ),
+                                        fluidRow(
+                                                DT::dataTableOutput(outputId = "table_gsekk")
                                         )
-                                ),
-                                conditionalPanel(
-                                        "input.go_analysis_method == 'ORA'",
-                                        DT::dataTableOutput(outputId = "table_ekk")
-                                ),
-                                conditionalPanel(
-                                        "input.go_analysis_method == 'GSEA'",
-                                        DT::dataTableOutput(outputId = "table_gsekk")
                                 )
                         ),
                         # Fourth tab content : Protein Domains Enrichment
@@ -403,13 +402,13 @@ ui = dashboardPage(
                                         column(
                                                 width = 6,
                                                 box2(
-                                                        title = "Analysis method", 
-                                                        radioButtons(inputId = "domain_analysis_method", 
-                                                                     label = NULL, 
-                                                                     choiceValues = c("ORA","GSEA"), 
-                                                                     choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
-                                                        ),
-                                                        hr(),
+                                                        title = "Analysis method (ORA)", 
+                                                        # radioButtons(inputId = "domain_analysis_method", 
+                                                        #              label = NULL, 
+                                                        #              choiceValues = c("ORA","GSEA"), 
+                                                        #              choiceNames = c("Over representation analysis (ORA)","Gene set enrichment analysis (GSEA)")
+                                                        # ),
+                                                        # hr(),
                                                         radioButtons("domain_filter",
                                                                      label = NULL,
                                                                      choiceValue = c("DEG+", "DEG-", "both"),
@@ -430,42 +429,50 @@ ui = dashboardPage(
                                                 )
                                         )
                                 ),
-                                fluidRow(
-                                        conditionalPanel(
-                                                "input.domain_analysis_method == 'ORA'",
+                                conditionalPanel(
+                                         "input.domain_analysis_method == 'ORA'",
+                                        fluidRow(
                                                 column(
                                                         width = 6,
                                                         box2(
                                                                 title = "ORA Barplot",
-                                                                plotlyOutput("domain_barplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotlyOutput("domain_barplot"),type="html", loader="dnaspin")
                                                         )
                                                 ),
                                                 column(
                                                         width = 6,
                                                         box2(
                                                                 title = "Dotplot",
-                                                                plotlyOutput("domain_dotplot")%>% withSpinner(color="#0dc5c1")
+                                                                withLoader(plotlyOutput("domain_dotplot"),type="html", loader="dnaspin")
                                                         )
                                                 )
-                                                
                                         ),
-                                        conditionalPanel(
-                                                "input.domain_analysis_method == 'GSEA'",
-                                                box2(
-                                                        title = "GSEA plot",
-                                                        plotlyOutput("domain_gseaplot")%>% withSpinner(color="#0dc5c1")
-                                                )
-                                                
-                                        ),
-                                        
-                                ),
-                                conditionalPanel(
-                                        "input.domain_analysis_method == 'ORA'",
-                                        dataTableOutput("domain_ORA_datatable")
+                                        fluidRow(
+                                                dataTableOutput("domain_ORA_datatable")
+                                        )
                                 ),
                                 conditionalPanel(
                                         "input.domain_analysis_method == 'GSEA'",
-                                        dataTableOutput("domain_GSEA_datatable")
+                                        fluidRow(
+                                                column(
+                                                        width = 6,
+                                                        box2(
+                                                                title = "Dotplot",
+                                                                withLoader(plotlyOutput("domain_dotplot"),type="html", loader="dnaspin")
+                                                        )
+                                                ),
+                                                column(
+                                                        width = 6,
+                                                        box2(
+                                                                title = "GSEA plot",
+                                                                uiOutput("domains"),
+                                                                withLoader(plotlyOutput("domain_gseaplot"),type="html", loader="dnaspin")
+                                                        )
+                                                )
+                                        ),
+                                        fluidRow(
+                                                dataTableOutput("domain_GSEA_datatable")
+                                        )
                                 )
                         ),
                         tabItem(tabName = "about",
