@@ -522,7 +522,7 @@ function(input, output) {
                 output$pathplot_list<- renderUI({
                         req(gsekk())
                         choices=setNames(gsekk()$ID,gsekk()$Description)
-                        print(choices)
+                        #print(choices)
                         selectInput("select_path2", label = "Pathway of interest for Pathway plot",
                                     choices=choices,
                                     selected = 1
@@ -535,7 +535,7 @@ function(input, output) {
                 })
                 output$path_pathplot <- renderImage({
                         req(path_pathplot_input())
-                        print(path_pathplot_input())
+                        #print(path_pathplot_input())
                         list(src = paste(gsekk()[input$select_path2]$ID, ".pathview.png", sep = ""),
                             alt = "No pathview image found.",
                             width = '20%')
@@ -626,7 +626,7 @@ function(input, output) {
         observe({
                 req(input$select_path2)
                 image.path = file.path(getwd(), paste0(input$select_path2, ".pathview.png"))
-                print(image.path)
+                #print(image.path)
                 if(file.exists(image.path)) {
                         file.show(image.path)
                         showModal(modalDialog(h4(paste("The file is open in your default image viewer and saved at : ", image.path, sep = "\n")), easyClose = T, footer = modalButton("Ok")))
