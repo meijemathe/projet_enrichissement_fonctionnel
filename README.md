@@ -196,4 +196,4 @@ Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an
 Emi Tanaka and Niichan (2018). shinycustomloader: Custom Loader for Shiny Outputs. R package version 0.9.0. https://CRAN.R-project.org/package=shinycustomloader
 
 ## How to cite <a name="10">
-EnF'R : an R Shiny application for functional enrichment analysis. Louis Ollivier, Bryce Leterrier, Meije Mathé, Solène Pety, Nicolas Vergne, Hélène Dauchel, Universiteé de Rouen-Normandie
+EnF'R : an R Shiny application for functional enrichment analysis. Louis Ollivier, Bryce Leterrier, Meije Mathé, Solène Pety, Stéphanie Levon, Nicolas Vergne, Hélène Dauchel, master bioinformatics, 2022, Rouen Normandy Univerity, FRANCE
