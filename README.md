@@ -12,7 +12,7 @@ Organsation des fichiers & lancement de l'application :
 Bibliographie :   
 [Données](#8)  
 [Packages & logiciels](#9)  
-[How to site](#10)  
+[How to cite](#10)  
 
 ## Présentation du projet 
 ### Contexte et objectif(s) <a name="1"></a>
